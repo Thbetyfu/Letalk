@@ -24,7 +24,7 @@ db = client['LoveConnect']
 users_collection = db['users']
 
 # Secret Key for JWT
-JWT_SECRET = 'loveconnect'
+JWT_SECRET = 'letalk'
 JWT_ALGORITHM = 'HS256'
 
 def generate_partner_code():
@@ -226,7 +226,7 @@ def login(request):
 
             response = JsonResponse({'message': 'Login successful', 'token': token})
             # response.set_cookie(
-            #     key='loveconnect',
+            #     key='letalk',
             #     value=token,
             #     httponly=True,
             #     samesite='Lax',
@@ -293,7 +293,7 @@ def google_signin(request):
                     'token': jwt_token,  # return token since cookie is disabled
                 }, status=200)
                 # response.set_cookie(
-                #     key='loveconnect',
+                #     key='letalk',
                 #     value=jwt_token,
                 #     httponly=True,
                 #     samesite='Lax',
@@ -320,7 +320,7 @@ def google_signin(request):
                 'token': jwt_token,          # return token since cookie is disabled
             })
             # response.set_cookie(
-            #     key='loveconnect',
+            #     key='letalk',
             #     value=jwt_token,
             #     httponly=True,
             #     samesite='Lax',
@@ -963,7 +963,7 @@ def breakup(request):
 def logout(request):
     if request.method == 'POST':
         response = JsonResponse({'message': 'Logged out successfully'})
-        response.delete_cookie('loveconnect')
+        response.delete_cookie('letalk')
         return response
     
     return JsonResponse({'error': 'Only POST method allowed'}, status=405)

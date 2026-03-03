@@ -272,7 +272,7 @@ const Gallery: React.FC = () => {
       try {
         const token = document.cookie
           .split('; ')
-          .find(row => row.startsWith('loveconnect='))
+          .find(row => row.startsWith('letalk='))
           ?.split('=')[1];
 
         const [userRes, galleryRes] = await Promise.all([
@@ -317,7 +317,7 @@ const Gallery: React.FC = () => {
     const fetchUser = async () => {
       const token = document.cookie
           .split('; ')
-          .find(row => row.startsWith('loveconnect='))
+          .find(row => row.startsWith('letalk='))
           ?.split('=')[1];
 
       const res = await fetch("http://localhost:8000/letalk/api/get-user/", {

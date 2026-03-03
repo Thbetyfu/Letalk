@@ -31,7 +31,7 @@ const Extras: React.FC = () => {
     // Get token from cookies
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     fetch('http://localhost:8000/letalk/api/extras/', {
@@ -58,7 +58,7 @@ const handleAddLoveNote = async () => {
     // Get token from cookies
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     const res = await fetch('http://localhost:8000/letalk/api/extras/lovejar/add/', {
@@ -81,7 +81,7 @@ const handleAddLoveNote = async () => {
     // Get token from cookies
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     await fetch(`http://localhost:8000/letalk/api/extras/lovejar/reveal/${id}/`, {
@@ -104,7 +104,7 @@ const handleAddLoveNote = async () => {
     // Get token from cookies
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     const res = await fetch('http://localhost:8000/letalk/api/extras/todo/add/', {
@@ -126,7 +126,7 @@ const handleAddLoveNote = async () => {
     // Get token from cookies
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     await fetch(`http://localhost:8000/letalk/api/extras/todo/toggle/${id}/`, {
@@ -147,7 +147,7 @@ const handleAddLoveNote = async () => {
     // Get token from cookies
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     await fetch(`http://localhost:8000/letalk/api/extras/todo/delete/${id}/`, {
@@ -164,7 +164,7 @@ const handleAddLoveNote = async () => {
     // Get token from cookies
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     await fetch(`http://localhost:8000/letalk/api/extras/lovejar/delete/${id}/`, {

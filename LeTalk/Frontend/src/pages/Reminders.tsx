@@ -42,7 +42,7 @@ const Reminders: React.FC = () => {
       try {
         const token = document.cookie
           .split('; ')
-          .find(row => row.startsWith('loveconnect='))
+          .find(row => row.startsWith('letalk='))
           ?.split('=')[1];
 
         const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
@@ -96,7 +96,7 @@ const Reminders: React.FC = () => {
       try {
         const token = document.cookie
         .split('; ')
-        .find(row => row.startsWith('loveconnect='))
+        .find(row => row.startsWith('letalk='))
         ?.split('=')[1];
         if (isEditing && editingReminder) {
           // PATCH to update
@@ -156,7 +156,7 @@ const Reminders: React.FC = () => {
     try {
       const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
       await axios.patch(`http://localhost:8000/letalk/api/reminders/complete/${id}/`, null, {
@@ -187,7 +187,7 @@ const Reminders: React.FC = () => {
     try {
       const token = document.cookie
         .split('; ')
-        .find(row => row.startsWith('loveconnect='))
+        .find(row => row.startsWith('letalk='))
         ?.split('=')[1];
 
       await axios.delete(`http://localhost:8000/letalk/api/reminders/delete/${id}/`, {

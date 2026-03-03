@@ -20,7 +20,7 @@ users_collection = db['users']
 extras_collection = db['extras']
 
 # JWT Config
-JWT_SECRET = 'loveconnect'
+JWT_SECRET = 'letalk'
 JWT_ALGORITHM = 'HS256'
 
 

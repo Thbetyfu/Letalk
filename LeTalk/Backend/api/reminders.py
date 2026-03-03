@@ -18,7 +18,7 @@ users_collection = db['users']
 reminders_collection = db['reminders']
 
 # Secret Key for JWT
-JWT_SECRET = 'loveconnect'
+JWT_SECRET = 'letalk'
 JWT_ALGORITHM = 'HS256'
 
 @csrf_exempt

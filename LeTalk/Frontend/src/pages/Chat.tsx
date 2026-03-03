@@ -95,7 +95,7 @@ const Chat: React.FC = () => {
 
       const token = document.cookie
         .split('; ')
-        .find(row => row.startsWith('loveconnect='))
+        .find(row => row.startsWith('letalk='))
         ?.split('=')[1];
 
       if (!token) {

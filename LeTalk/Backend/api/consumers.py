@@ -22,7 +22,7 @@ client = MongoClient(os.getenv('MONGODB_URI'))
 db = client['LoveConnect']
 users_collection = db['users']
 
-JWT_SECRET = 'loveconnect'
+JWT_SECRET = 'letalk'
 JWT_ALGORITHM = 'HS256'
 
 

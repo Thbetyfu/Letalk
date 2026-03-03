@@ -37,7 +37,7 @@ export const ReminderNotificationProvider: React.FC<{ children: React.ReactNode 
       try {
         const token = document.cookie
         .split('; ')
-        .find(row => row.startsWith('loveconnect='))
+        .find(row => row.startsWith('letalk='))
         ?.split('=')[1];
         const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
         withCredentials: true,

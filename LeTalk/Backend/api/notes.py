@@ -21,7 +21,7 @@ users_collection = db['users']
 notes_collection = db['notes']
 
 # Secret Key for JWT
-JWT_SECRET = 'loveconnect'
+JWT_SECRET = 'letalk'
 JWT_ALGORITHM = 'HS256'
 
 @csrf_exempt

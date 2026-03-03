@@ -154,7 +154,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.token) {
         // Store token in cookie (expires in 30 days)
-        document.cookie = `loveconnect=${data.token}; path=/; max-age=${30 * 24 * 60 * 60}; secure; samesite=strict`;
+        document.cookie = `letalk=${data.token}; path=/; max-age=${30 * 24 * 60 * 60}; secure; samesite=strict`;
       }
 
       if (response.status === 403) {

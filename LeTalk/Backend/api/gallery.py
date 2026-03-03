@@ -65,7 +65,7 @@ def upload_photo(request):
             
             token = auth_header.split(' ')[1]
 
-            payload = jwt.decode(token, "loveconnect", algorithms=["HS256"])
+            payload = jwt.decode(token, "letalk", algorithms=["HS256"])
             user_email = payload['email']
             uploader_name = payload['name']
             partner_code = payload['partnerCode']
@@ -111,7 +111,7 @@ def get_gallery(request):
             
             token = auth_header.split(' ')[1]
 
-            payload = jwt.decode(token, "loveconnect", algorithms=["HS256"])
+            payload = jwt.decode(token, "letalk", algorithms=["HS256"])
             partner_code = payload['partnerCode']
 
             photos = list(db['gallery'].find({'partnerCode': partner_code}).sort('uploadedAt', -1))
@@ -143,7 +143,7 @@ def toggle_like(request):
             
             token = auth_header.split(' ')[1]
 
-            payload = jwt.decode(token, "loveconnect", algorithms=["HS256"])
+            payload = jwt.decode(token, "letalk", algorithms=["HS256"])
             user_email = payload['email']
 
             data = json.loads(request.body)
@@ -189,7 +189,7 @@ def delete_photo(request):
             
             token = auth_header.split(' ')[1]
             
-            payload = jwt.decode(token, "loveconnect", algorithms=["HS256"])
+            payload = jwt.decode(token, "letalk", algorithms=["HS256"])
 
             data = json.loads(request.body)
             photo_id = data.get('id')
@@ -235,7 +235,7 @@ def edit_photo_caption(request):
             
             token = auth_header.split(' ')[1]
             
-            payload = jwt.decode(token, "loveconnect", algorithms=["HS256"])
+            payload = jwt.decode(token, "letalk", algorithms=["HS256"])
 
             data = json.loads(request.body)
             photo_id = data.get('id')

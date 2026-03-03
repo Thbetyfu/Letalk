@@ -51,7 +51,7 @@ const Notes: React.FC = () => {
   useEffect(() => {
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     fetch('http://localhost:8000/letalk/api/notes/', {
@@ -96,7 +96,7 @@ const Notes: React.FC = () => {
     showToast('Creating a new note for your thoughts... 💕', 'info');
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     const res = await fetch(`http://localhost:8000/letalk/api/notes/create/`, {
@@ -133,7 +133,7 @@ const Notes: React.FC = () => {
 
       const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
       const res = await fetch(`http://localhost:8000/letalk/api/notes/${editingNote.id}/`, {
@@ -169,7 +169,7 @@ const Notes: React.FC = () => {
 
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('loveconnect='))
+      .find(row => row.startsWith('letalk='))
       ?.split('=')[1];
 
     const res = await fetch(`http://localhost:8000/letalk/api/notes/${id}/delete/`, {
