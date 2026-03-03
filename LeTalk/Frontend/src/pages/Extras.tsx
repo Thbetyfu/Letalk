@@ -34,7 +34,7 @@ const Extras: React.FC = () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    fetch('http://localhost:8000/loveconnect/api/extras/', {
+    fetch('http://localhost:8000/letalk/api/extras/', {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -61,7 +61,7 @@ const handleAddLoveNote = async () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    const res = await fetch('http://localhost:8000/loveconnect/api/extras/lovejar/add/', {
+    const res = await fetch('http://localhost:8000/letalk/api/extras/lovejar/add/', {
       method: 'POST',
       credentials: 'include',
       headers: { 
@@ -84,7 +84,7 @@ const handleAddLoveNote = async () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    await fetch(`http://localhost:8000/loveconnect/api/extras/lovejar/reveal/${id}/`, {
+    await fetch(`http://localhost:8000/letalk/api/extras/lovejar/reveal/${id}/`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${token}`
@@ -107,7 +107,7 @@ const handleAddLoveNote = async () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    const res = await fetch('http://localhost:8000/loveconnect/api/extras/todo/add/', {
+    const res = await fetch('http://localhost:8000/letalk/api/extras/todo/add/', {
       method: 'POST',
       credentials: 'include',
       headers: { 
@@ -129,7 +129,7 @@ const handleAddLoveNote = async () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    await fetch(`http://localhost:8000/loveconnect/api/extras/todo/toggle/${id}/`, {
+    await fetch(`http://localhost:8000/letalk/api/extras/todo/toggle/${id}/`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${token}`
@@ -150,7 +150,7 @@ const handleAddLoveNote = async () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    await fetch(`http://localhost:8000/loveconnect/api/extras/todo/delete/${id}/`, {
+    await fetch(`http://localhost:8000/letalk/api/extras/todo/delete/${id}/`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`
@@ -167,7 +167,7 @@ const handleAddLoveNote = async () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    await fetch(`http://localhost:8000/loveconnect/api/extras/lovejar/delete/${id}/`, {
+    await fetch(`http://localhost:8000/letalk/api/extras/lovejar/delete/${id}/`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`
@@ -203,8 +203,8 @@ const handleAddLoveNote = async () => {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 border-b-2 font-medium transition-all duration-200 whitespace-nowrap min-w-0 flex-shrink-0 ${
                   activeTab === tab.id
-                    ? 'border-pink-600 text-pink-600 bg-pink-50'
-                    : `border-transparent ${isDarkMode ? 'text-gray-400 hover:text-pink-400 hover:bg-gray-700' : 'text-gray-600 hover:text-pink-600 hover:bg-pink-25'}`
+                    ? 'border-violet-600 text-violet-600 bg-pink-50'
+                    : `border-transparent ${isDarkMode ? 'text-gray-400 hover:text-pink-400 hover:bg-gray-700' : 'text-gray-600 hover:text-violet-600 hover:bg-pink-25'}`
                 }`}
               >
                 <tab.icon size={18} className="sm:w-5 sm:h-5" />
@@ -222,7 +222,7 @@ const handleAddLoveNote = async () => {
             <div className={`rounded-xl p-4 sm:p-6 shadow-sm ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
               <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-4 sm:mb-6">
                 <div className="bg-pink-100 p-3 rounded-full w-fit">
-                  <Heart className="w-6 h-6 text-pink-600" />
+                  <Heart className="w-6 h-6 text-violet-600" />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-lg sm:text-xl font-semibold">Love Jar</h2>
@@ -238,12 +238,12 @@ const handleAddLoveNote = async () => {
                     value={newLoveNote}
                     onChange={(e) => setNewLoveNote(e.target.value)}
                     placeholder="Write a sweet message for your partner..."
-                    className={`w-full px-4 py-3 sm:px-5 sm:py-4 border rounded-xl focus:ring-2 focus:ring-pink-500 h-20 sm:h-24 resize-none text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                    className={`w-full px-4 py-3 sm:px-5 sm:py-4 border rounded-xl focus:ring-2 focus:ring-violet-500 h-20 sm:h-24 resize-none text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   />
                   <button
                     onClick={handleAddLoveNote}
                     disabled={!newLoveNote.trim()}
-                    className={`mt-3 sm:mt-4 px-6 py-3 sm:px-8 sm:py-3 bg-pink-600 text-white rounded-xl hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-medium transition-all duration-200 w-full sm:w-auto min-h-[44px] ${isDarkMode ? 'hover:bg-pink-700' : ''}`}
+                    className={`mt-3 sm:mt-4 px-6 py-3 sm:px-8 sm:py-3 bg-violet-600 text-white rounded-xl hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-medium transition-all duration-200 w-full sm:w-auto min-h-[44px] ${isDarkMode ? 'hover:bg-violet-700' : ''}`}
                   >
                     <Plus size={16} />
                     <span className="text-sm sm:text-base">Add to Love Jar</span>
@@ -258,7 +258,7 @@ const handleAddLoveNote = async () => {
                   className={`relative rounded-xl p-4 sm:p-6 shadow-sm border-2 transition-all duration-200 ${
                     note.isRevealed
                       ? `border-pink-200 hover:shadow-md ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
-                      : `border-pink-400 cursor-pointer hover:border-pink-500 hover:shadow-md transform hover:scale-[1.02] ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
+                      : `border-pink-400 cursor-pointer hover:border-violet-500 hover:shadow-md transform hover:scale-[1.02] ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
                   }`}
                   onClick={() => !note.isRevealed && handleRevealNote(note.id)}
                 >
@@ -283,7 +283,7 @@ const handleAddLoveNote = async () => {
                     </div>
                   ) : (
                     <div className="text-center py-4 sm:py-6">
-                      <Gift className={`w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-3 sm:mb-4 ${isDarkMode ? 'text-pink-400' : 'text-pink-600'}`} />
+                      <Gift className={`w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-3 sm:mb-4 ${isDarkMode ? 'text-pink-400' : 'text-violet-600'}`} />
                       <p className={`font-medium text-sm sm:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Surprise from {note.addedBy}</p>
                       <p className={`text-xs sm:text-sm mt-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Tap to reveal</p>
                     </div>
@@ -316,7 +316,7 @@ const handleAddLoveNote = async () => {
                   value={newTodoItem}
                   onChange={(e) => setNewTodoItem(e.target.value)}
                   placeholder="Add something to do together..."
-                  className={`flex-1 px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                  className={`flex-1 px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   onKeyPress={(e) => e.key === 'Enter' && handleAddTodo()}
                 />
                 <button
@@ -337,7 +337,7 @@ const handleAddLoveNote = async () => {
                     className={`relative flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
                       item.isCompleted
                         ? 'bg-green-50 border-green-200'
-                        : `hover:border-pink-700 hover:shadow-sm ${isDarkMode ? 'bg-gray-700 border-pink-400' : 'bg-gray-50 border-gay-500'}`
+                        : `hover:border-violet-700 hover:shadow-sm ${isDarkMode ? 'bg-gray-700 border-pink-400' : 'bg-gray-50 border-gay-500'}`
                     }`}
                   >
                     {/* Completion Checkbox */}

@@ -45,7 +45,7 @@ const Reminders: React.FC = () => {
           .find(row => row.startsWith('loveconnect='))
           ?.split('=')[1];
 
-        const res = await axios.get('http://localhost:8000/loveconnect/api/reminders/', {
+        const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`
@@ -101,7 +101,7 @@ const Reminders: React.FC = () => {
         if (isEditing && editingReminder) {
           // PATCH to update
           await axios.patch(
-            `http://localhost:8000/loveconnect/api/reminders/update/${editingReminder.id}/`,
+            `http://localhost:8000/letalk/api/reminders/update/${editingReminder.id}/`,
             newReminder,
             { 
               headers: {
@@ -112,7 +112,7 @@ const Reminders: React.FC = () => {
         } else {
           // POST to create
           await axios.post(
-            'http://localhost:8000/loveconnect/api/reminders/create/',
+            'http://localhost:8000/letalk/api/reminders/create/',
             newReminder,
             { headers: {
                 Authorization: `Bearer ${token}`
@@ -134,7 +134,7 @@ const Reminders: React.FC = () => {
         });
         setIsCreating(false);
         // Refresh list
-        const refreshed = await axios.get('http://localhost:8000/loveconnect/api/reminders/', {
+        const refreshed = await axios.get('http://localhost:8000/letalk/api/reminders/', {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}` // <-- Add this line
@@ -159,13 +159,13 @@ const Reminders: React.FC = () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-      await axios.patch(`http://localhost:8000/loveconnect/api/reminders/complete/${id}/`, null, {
+      await axios.patch(`http://localhost:8000/letalk/api/reminders/complete/${id}/`, null, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      const res = await axios.get('http://localhost:8000/loveconnect/api/reminders/', {
+      const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`
@@ -190,13 +190,13 @@ const Reminders: React.FC = () => {
         .find(row => row.startsWith('loveconnect='))
         ?.split('=')[1];
 
-      await axios.delete(`http://localhost:8000/loveconnect/api/reminders/delete/${id}/`, {
+      await axios.delete(`http://localhost:8000/letalk/api/reminders/delete/${id}/`, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      const res = await axios.get('http://localhost:8000/loveconnect/api/reminders/', {
+      const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`
@@ -260,11 +260,11 @@ const Reminders: React.FC = () => {
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-pink-50 text-gray-800'}`}>
       {/* Notification Toast */}
       {notification && (
-        <div className={`fixed top-4 left-4 right-4 sm:top-6 sm:right-6 sm:left-auto z-50 ${isDarkMode ? 'bg-gray-700' : 'bg-pink-600'} text-white px-4 py-3 sm:px-6 rounded-lg shadow-lg flex items-start space-x-3 animate-fade-in max-w-sm sm:max-w-md`}>
+        <div className={`fixed top-4 left-4 right-4 sm:top-6 sm:right-6 sm:left-auto z-50 ${isDarkMode ? 'bg-gray-700' : 'bg-violet-600'} text-white px-4 py-3 sm:px-6 rounded-lg shadow-lg flex items-start space-x-3 animate-fade-in max-w-sm sm:max-w-md`}>
           <Bell className="w-5 h-5 mt-0.5 flex-shrink-0" />
           <span className="text-sm sm:text-base flex-1 leading-relaxed">{notification}</span>
           <button
-            className={`px-2 py-1 ${isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-pink-600'} rounded text-xs sm:text-sm hover:bg-pink-100 transition-colors duration-200 flex-shrink-0`}
+            className={`px-2 py-1 ${isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-violet-600'} rounded text-xs sm:text-sm hover:bg-pink-100 transition-colors duration-200 flex-shrink-0`}
             onClick={() => setNotification(null)}
           >
             Dismiss
@@ -284,7 +284,7 @@ const Reminders: React.FC = () => {
             </div>
             <button
               onClick={() => setIsCreating(true)}
-              className={`p-3 sm:p-2 ${isDarkMode ? 'bg-gray-700' : 'bg-pink-600'} text-white rounded-full hover:bg-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 min-w-[48px] min-h-[48px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center`}
+              className={`p-3 sm:p-2 ${isDarkMode ? 'bg-gray-700' : 'bg-violet-600'} text-white rounded-full hover:bg-violet-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 min-w-[48px] min-h-[48px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center`}
               aria-label="Create new reminder"
             >
               <Plus size={20} className="sm:w-5 sm:h-5" />
@@ -309,7 +309,7 @@ const Reminders: React.FC = () => {
                   type="text"
                   value={newReminder.title || ''}
                   onChange={(e) => setNewReminder(prev => ({ ...prev, title: e.target.value }))}
-                  className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                  className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   placeholder="What do you need to remember?"
                 />
               </div>
@@ -320,7 +320,7 @@ const Reminders: React.FC = () => {
                 <textarea
                   value={newReminder.description || ''}
                   onChange={(e) => setNewReminder(prev => ({ ...prev, description: e.target.value }))}
-                  className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 h-20 sm:h-24 resize-none text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                  className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 h-20 sm:h-24 resize-none text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   placeholder="Add some details..."
                 />
               </div>
@@ -333,7 +333,7 @@ const Reminders: React.FC = () => {
                     type="date"
                     value={newReminder.date?.toISOString().split('T')[0] || ''}
                     onChange={(e) => setNewReminder(prev => ({ ...prev, date: new Date(e.target.value) }))}
-                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   />
                 </div>
                 <div>
@@ -344,7 +344,7 @@ const Reminders: React.FC = () => {
                     type="time"
                     value={newReminder.time || ''}
                     onChange={(e) => setNewReminder(prev => ({ ...prev, time: e.target.value }))}
-                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   />
                 </div>
                 <div className="sm:col-span-2 lg:col-span-1">
@@ -354,7 +354,7 @@ const Reminders: React.FC = () => {
                   <select
                     value={newReminder.priority || 'medium'}
                     onChange={(e) => setNewReminder(prev => ({ ...prev, priority: e.target.value as 'low' | 'medium' | 'high' }))}
-                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   >
                     <option value="low">Low Priority</option>
                     <option value="medium">Medium Priority</option>
@@ -368,7 +368,7 @@ const Reminders: React.FC = () => {
                   id="isRecurring"
                   checked={newReminder.isRecurring || false}
                   onChange={(e) => setNewReminder(prev => ({ ...prev, isRecurring: e.target.checked }))}
-                  className="w-5 h-5 text-pink-600 rounded focus:ring-pink-500 border-pink-300"
+                  className="w-5 h-5 text-violet-600 rounded focus:ring-violet-500 border-violet-300"
                 />
                 <label htmlFor="isRecurring" className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} font-medium`}>
                   Recurring reminder
@@ -382,7 +382,7 @@ const Reminders: React.FC = () => {
                   <select
                     value={newReminder.recurringType || 'daily'}
                     onChange={(e) => setNewReminder(prev => ({ ...prev, recurringType: e.target.value as 'daily' | 'weekly' | 'monthly' | 'yearly' }))}
-                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+                    className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   >
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -394,7 +394,7 @@ const Reminders: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 pt-2">
                 <button
                   onClick={handleCreateReminder}
-                  className={`px-6 py-3 sm:px-8 sm:py-3 ${isDarkMode ? 'bg-gray-700' : 'bg-pink-600'} text-white rounded-xl hover:bg-pink-700 font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-[1.02] min-h-[48px] flex items-center justify-center`}
+                  className={`px-6 py-3 sm:px-8 sm:py-3 ${isDarkMode ? 'bg-gray-700' : 'bg-violet-600'} text-white rounded-xl hover:bg-violet-700 font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-[1.02] min-h-[48px] flex items-center justify-center`}
                 >
                   {isEditing ? 'Update Reminder' : 'Create Reminder'}
                 </button>
@@ -427,7 +427,7 @@ const Reminders: React.FC = () => {
           {sortedReminders.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
               <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 ${isDarkMode ? 'bg-gray-700' : 'bg-pink-100'}`}>
-                <Bell className={`w-8 h-8 sm:w-10 sm:h-10 ${isDarkMode ? 'text-gray-400' : 'text-pink-600'}`} />
+                <Bell className={`w-8 h-8 sm:w-10 sm:h-10 ${isDarkMode ? 'text-gray-400' : 'text-violet-600'}`} />
               </div>
               <h3 className={`text-lg sm:text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>No reminders yet</h3>
               <p className={`text-sm sm:text-base mb-4 sm:mb-6 max-w-md mx-auto leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -435,7 +435,7 @@ const Reminders: React.FC = () => {
               </p>
               <button
                 onClick={() => setIsCreating(true)}
-                className={`bg-pink-600 text-white px-6 py-3 sm:px-8 sm:py-3 rounded-xl hover:bg-pink-700 font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-[1.02] min-h-[48px]`}
+                className={`bg-violet-600 text-white px-6 py-3 sm:px-8 sm:py-3 rounded-xl hover:bg-violet-700 font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-[1.02] min-h-[48px]`}
               >
                 Create First Reminder
               </button>
@@ -444,7 +444,7 @@ const Reminders: React.FC = () => {
             sortedReminders.map((reminder) => (
               <div
                 key={reminder.id}
-                className={`rounded-xl p-4 sm:p-6 shadow-sm border-l-4 transition-all duration-200 hover:shadow-md ${reminder.isCompleted ? 'border-green-500 opacity-75' : 'border-pink-500'} ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+                className={`rounded-xl p-4 sm:p-6 shadow-sm border-l-4 transition-all duration-200 hover:shadow-md ${reminder.isCompleted ? 'border-green-500 opacity-75' : 'border-violet-500'} ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
               >
                 <div className="flex items-start justify-between space-x-3 sm:space-x-4">
                   <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
@@ -453,7 +453,7 @@ const Reminders: React.FC = () => {
                       className={`mt-1 p-2 sm:p-2.5 rounded-full transition-all duration-200 flex-shrink-0 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center ${
                         reminder.isCompleted
                           ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                          : 'bg-pink-100 text-pink-600 hover:bg-pink-200 transform hover:scale-105'
+                          : 'bg-pink-100 text-violet-600 hover:bg-pink-200 transform hover:scale-105'
                       }`}
                       aria-label={reminder.isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                     >
@@ -510,7 +510,7 @@ const Reminders: React.FC = () => {
                           date: new Date(reminder.date)
                         });
                       }}
-                      className={`p-2 sm:p-2.5 ${isDarkMode ? 'text-gray-400 hover:text-pink-400' : 'text-gray-400 hover:text-pink-600'} rounded-lg hover:bg-pink-50 transition-all duration-200 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center`}
+                      className={`p-2 sm:p-2.5 ${isDarkMode ? 'text-gray-400 hover:text-pink-400' : 'text-gray-400 hover:text-violet-600'} rounded-lg hover:bg-pink-50 transition-all duration-200 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center`}
                       aria-label="Edit reminder"
                     >
                       <Edit3 size={14} className="sm:w-4 sm:h-4" />

@@ -121,7 +121,7 @@ const Gallery: React.FC = () => {
       const formData = new FormData();
       formData.append('image', selectedFile);
       formData.append('caption', caption.trim());
-      const response = await fetch('http://localhost:8000/loveconnect/api/upload-photo/', {
+      const response = await fetch('http://localhost:8000/letalk/api/upload-photo/', {
         method: 'POST',
         body: formData,
         credentials: 'include'
@@ -164,7 +164,7 @@ const Gallery: React.FC = () => {
   const submitEditCaption = async () => {
     if (!editModalItem || !editedCaption.trim()) return;
     try {
-      const res = await fetch("http://localhost:8000/loveconnect/api/edit-caption/", {
+      const res = await fetch("http://localhost:8000/letalk/api/edit-caption/", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -193,7 +193,7 @@ const Gallery: React.FC = () => {
   const confirmDelete = async () => {
     if (!deleteConfirmItem) return;
     try {
-      const res = await fetch("http://localhost:8000/loveconnect/api/delete-photo/", {
+      const res = await fetch("http://localhost:8000/letalk/api/delete-photo/", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -228,7 +228,7 @@ const Gallery: React.FC = () => {
     const item = galleryItems.find(i => i.id === id);
     if (!item || !currentUserEmail) return;
     try {
-      const res = await fetch('http://localhost:8000/loveconnect/api/toggle-like/', {
+      const res = await fetch('http://localhost:8000/letalk/api/toggle-like/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -276,14 +276,14 @@ const Gallery: React.FC = () => {
           ?.split('=')[1];
 
         const [userRes, galleryRes] = await Promise.all([
-          fetch('http://localhost:8000/loveconnect/api/get-user/', {
+          fetch('http://localhost:8000/letalk/api/get-user/', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`
             },
             credentials: 'include'
           }),
-          fetch('http://localhost:8000/loveconnect/api/gallery/', {
+          fetch('http://localhost:8000/letalk/api/gallery/', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`
@@ -320,7 +320,7 @@ const Gallery: React.FC = () => {
           .find(row => row.startsWith('loveconnect='))
           ?.split('=')[1];
 
-      const res = await fetch("http://localhost:8000/loveconnect/api/get-user/", {
+      const res = await fetch("http://localhost:8000/letalk/api/get-user/", {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
@@ -358,7 +358,7 @@ const Gallery: React.FC = () => {
             <div className="flex-shrink-0">
               {toast.type === 'success' && (
                 <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
-                  <CheckCircle size={18} className="text-pink-600" />
+                  <CheckCircle size={18} className="text-violet-600" />
                 </div>
               )}
               {toast.type === 'error' && (
@@ -386,18 +386,18 @@ const Gallery: React.FC = () => {
       </div>
 
       {/* Header */}
-      <div className={`border-b ${isDarkMode ? 'border-pink-700 bg-gray-800' : 'border-pink-200 bg-white'} p-4 fixed w-full top-0 left-0 z-40 shadow-sm`}>
+      <div className={`border-b ${isDarkMode ? 'border-violet-700 bg-gray-800' : 'border-pink-200 bg-white'} p-4 fixed w-full top-0 left-0 z-40 shadow-sm`}>
         <div className="flex flex-col sm:flex-row items-center justify-between">
           <h1 className="text-xl font-bold">Our Gallery</h1>
           <div className="flex items-center mt-2 sm:mt-0">
             <button
               onClick={() => setShowOnlyLiked(!showOnlyLiked)}
-              className={`px-3 py-1 text-sm rounded-full transition mr-2 ${showOnlyLiked ? 'bg-pink-600 text-white' : 'bg-gray-200 text-gray-700'
+              className={`px-3 py-1 text-sm rounded-full transition mr-2 ${showOnlyLiked ? 'bg-violet-600 text-white' : 'bg-gray-200 text-gray-700'
                 }`}
             >
               {showOnlyLiked ? 'Liked Only' : 'All Posts'}
             </button>
-            <label htmlFor="upload-image" className="p-2 bg-pink-600 text-white rounded-full hover:bg-pink-700 cursor-pointer">
+            <label htmlFor="upload-image" className="p-2 bg-violet-600 text-white rounded-full hover:bg-violet-700 cursor-pointer">
               <Plus size={20} />
             </label>
             <input
@@ -421,7 +421,7 @@ const Gallery: React.FC = () => {
         {(isUploading || isConverting) && (
           <div className={`bg-white rounded-xl p-4 mb-4 shadow-sm ${isDarkMode ? 'bg-gray-800' : ''}`}>
             <div className="flex items-center justify-center space-x-2">
-              <div className="w-4 h-4 bg-pink-600 rounded-full animate-pulse"></div>
+              <div className="w-4 h-4 bg-violet-600 rounded-full animate-pulse"></div>
               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
                 {isConverting ? 'Converting image...' : 'Uploading...'}
               </span>
@@ -431,12 +431,12 @@ const Gallery: React.FC = () => {
         {galleryItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Plus className="w-8 h-8 text-pink-600" />
+              <Plus className="w-8 h-8 text-violet-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">No photos yet</h3>
             <p className="text-gray-600 mb-4">Start building your gallery together!</p>
             <p className="text-xs text-gray-500 mb-4">Supports JPG, JPEG, and HEIC images</p>
-            <label htmlFor="upload-image" className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 cursor-pointer">
+            <label htmlFor="upload-image" className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 cursor-pointer">
               Upload First Photo
             </label>
           </div>
@@ -445,7 +445,7 @@ const Gallery: React.FC = () => {
             {(showOnlyLiked ? galleryItems.filter(i => i.liked) : galleryItems).map((item) => (
               <div
                 key={item.id}
-                className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer border-pink-500 ${isDarkMode ? 'bg-gray-800' : ''}`}
+                className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer border-violet-500 ${isDarkMode ? 'bg-gray-800' : ''}`}
                 onClick={() => setSelectedImage(item)}
               >
                 <div className="aspect-square overflow-hidden">
@@ -464,7 +464,7 @@ const Gallery: React.FC = () => {
                         e.stopPropagation();
                         toggleLike(item.id);
                       }}
-                      className={`p-1 rounded-full ${item.liked ? 'text-pink-600' : 'text-gray-400 hover:text-pink-600'
+                      className={`p-1 rounded-full ${item.liked ? 'text-violet-600' : 'text-gray-400 hover:text-violet-600'
                         }`}
                     >
                       <Heart size={16} fill={item.liked ? 'currentColor' : 'none'} />
@@ -515,7 +515,7 @@ const Gallery: React.FC = () => {
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
                   placeholder="Write a caption for your photo..."
-                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-gray-300'}`}
+                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-gray-300'}`}
                   rows={3}
                   disabled={isConverting}
                 />
@@ -531,7 +531,7 @@ const Gallery: React.FC = () => {
                 <button
                   onClick={handleUploadSubmit}
                   disabled={isUploading || isConverting || !caption.trim()}
-                  className="flex-1 py-2 px-4 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="flex-1 py-2 px-4 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   {isConverting ? 'Converting...' : isUploading ? 'Uploading...' : 'Upload'}
                 </button>
@@ -558,10 +558,10 @@ const Gallery: React.FC = () => {
                 <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{formatDate(selectedImage.uploadedAt)}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <button onClick={() => toggleLike(selectedImage.id)} className={`p-2 rounded-full ${selectedImage.liked ? 'text-pink-600' : 'text-gray-400 hover:text-pink-600'}`}>
+                <button onClick={() => toggleLike(selectedImage.id)} className={`p-2 rounded-full ${selectedImage.liked ? 'text-violet-600' : 'text-gray-400 hover:text-violet-600'}`}>
                   <Heart size={20} fill={selectedImage.liked ? 'currentColor' : 'none'} />
                 </button>
-                <button onClick={() => openEditModal(selectedImage)} className="p-2 text-pink-500 hover:text-pink-700">
+                <button onClick={() => openEditModal(selectedImage)} className="p-2 text-violet-500 hover:text-violet-700">
                   ✏️
                 </button>
                 <button onClick={() => openDeleteConfirm(selectedImage)} className="p-2 text-red-500 hover:text-red-700">
@@ -590,14 +590,14 @@ const Gallery: React.FC = () => {
           <div className={`bg-white rounded-xl w-full max-w-md shadow-xl p-6 ${isDarkMode ? 'bg-gray-800' : ''}`}>
             <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Edit Caption</h3>
             <textarea
-              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
               value={editedCaption}
               onChange={(e) => setEditedCaption(e.target.value)}
               rows={3}
             />
             <div className="mt-4 flex justify-end space-x-3">
               <button onClick={() => setEditModalItem(null)} className={`px-4 py-2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'}`}>Cancel</button>
-              <button onClick={submitEditCaption} className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">
+              <button onClick={submitEditCaption} className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700">
                 Save
               </button>
             </div>

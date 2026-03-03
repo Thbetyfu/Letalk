@@ -58,7 +58,7 @@ const Settings: React.FC = () => {
         showToast('Please provide a reason for the breakup 💔', 'error');
         return;
       }
-      const statusRes = await fetch('http://localhost:8000/loveconnect/api/breakup/', {
+      const statusRes = await fetch('http://localhost:8000/letalk/api/breakup/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -69,7 +69,7 @@ const Settings: React.FC = () => {
         showToast(statusData.error || 'Failed to update breakup status', 'error');
         return;
       }
-      const res = await fetch('http://localhost:8000/loveconnect/api/logout/', {
+      const res = await fetch('http://localhost:8000/letalk/api/logout/', {
         method: 'POST',
         credentials: 'include'
       });
@@ -88,7 +88,7 @@ const Settings: React.FC = () => {
   };
 
   const handleSaveProfile = async () => {
-    await fetch('http://localhost:8000/loveconnect/api/update-profile/', {
+    await fetch('http://localhost:8000/letalk/api/update-profile/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const Settings: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:8000/loveconnect/api/change-pin/', {
+      const response = await fetch('http://localhost:8000/letalk/api/change-pin/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const Settings: React.FC = () => {
 
   const handleRelationshipStatusChange = async (newStatus: string) => {
     try {
-      const response = await fetch('http://localhost:8000/loveconnect/api/relationship-status', {
+      const response = await fetch('http://localhost:8000/letalk/api/relationship-status', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -292,7 +292,7 @@ const Settings: React.FC = () => {
     //       icon: Heart,
     //       label: 'Relationship Status',
     //       action: () => setShowBreakModal(true),
-    //       color: 'bg-pink-100 text-pink-600'
+    //       color: 'bg-pink-100 text-violet-600'
     //     }
     //   ]
     // },
@@ -344,7 +344,7 @@ const Settings: React.FC = () => {
             <div className="flex-shrink-0">
               {toast.type === 'success' && (
                 <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
-                  <CheckCircle size={18} className="text-pink-600" />
+                  <CheckCircle size={18} className="text-violet-600" />
                 </div>
               )}
               {toast.type === 'error' && (
@@ -371,19 +371,19 @@ const Settings: React.FC = () => {
         ))}
       </div>
       {/* Header */}
-      <div className={` border-b ${isDarkMode ? 'border-pink-700 bg-gray-900' : 'border-gray-200 bg-white'} p-4 fixed top-0 left-0 w-full z-30 shadow-sm`}>
+      <div className={` border-b ${isDarkMode ? 'border-violet-700 bg-gray-900' : 'border-gray-200 bg-white'} p-4 fixed top-0 left-0 w-full z-30 shadow-sm`}>
         <h1 className="text-xl font-bold">Settings</h1>
         <p className="text-sm">Manage your account and preferences</p>
       </div>
       <div className="p-4 max-w-4xl mx-auto pt-28">
         {/* Profile Card */}
-        <div className={`rounded-xl p-6 shadow-sm mb-6 border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-pink-500' : 'bg-white'}`}>
+        <div className={`rounded-xl p-6 shadow-sm mb-6 border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-violet-500' : 'bg-white'}`}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Profile</h2>
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className={`p-2 ${isDarkMode ? 'text-pink-500' : 'text-gray-600'} hover:text-pink-600 rounded-lg`}
+                className={`p-2 ${isDarkMode ? 'text-violet-500' : 'text-gray-600'} hover:text-violet-600 rounded-lg`}
               >
                 <Edit3 size={16} />
               </button>
@@ -391,7 +391,7 @@ const Settings: React.FC = () => {
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <div className="w-20 h-20 bg-pink-600 rounded-full flex items-center justify-center">
+              <div className="w-20 h-20 bg-violet-600 rounded-full flex items-center justify-center">
                 {user?.avatar ? (
                   <img
                     src={user.avatar}
@@ -404,7 +404,7 @@ const Settings: React.FC = () => {
                   </span>
                 )}
               </div>
-              <button className="absolute bottom-0 right-0 bg-pink-600 text-white p-1 rounded-full hover:bg-pink-700">
+              <button className="absolute bottom-0 right-0 bg-violet-600 text-white p-1 rounded-full hover:bg-violet-700">
                 <Camera size={12} />
               </button>
             </div>
@@ -415,13 +415,13 @@ const Settings: React.FC = () => {
                     type="text"
                     value={editedName}
                     onChange={(e) => setEditedName(e.target.value)}
-                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                     placeholder="Your name"
                   />
                   <div className="flex space-x-2">
                     <button
                       onClick={handleSaveProfile}
-                      className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 flex items-center space-x-2"
+                      className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 flex items-center space-x-2"
                     >
                       <Save size={16} />
                       <span>Save</span>
@@ -443,11 +443,11 @@ const Settings: React.FC = () => {
                   <h3 className="text-lg font-semibold">{user?.name}</h3>
                   <p>{user?.email}</p>
                   {user?.partnerName && (
-                    <p className="text-sm text-pink-600 mt-1">
+                    <p className="text-sm text-violet-600 mt-1">
                       Connected with {user.partnerName}
                     </p>
                   )}
-                  <p className="text-sm text-pink-600 mt-1">
+                  <p className="text-sm text-violet-600 mt-1">
                     Status: {user?.relationshipStatus === 'break' ? 'Taking a break 💔' :
                       user?.relationshipStatus === 'pending_patchup' ? 'Patch-up pending 🤝' :
                         'In love ❤️'}
@@ -460,7 +460,7 @@ const Settings: React.FC = () => {
         {/* Settings Sections */}
         <div className="space-y-6">
           {settingSections.map((section, index) => (
-            <div key={index} className={`rounded-xl p-6 shadow-sm border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-pink-500' : 'bg-white'}`}>
+            <div key={index} className={`rounded-xl p-6 shadow-sm border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-violet-500' : 'bg-white'}`}>
               <h3 className="text-lg font-semibold mb-4">{section.title}</h3>
               <div className="space-y-3">
                 {section.items.map((item, itemIndex) => (
@@ -477,7 +477,7 @@ const Settings: React.FC = () => {
                       <span className="font-medium">{item.label}</span>
                     </div>
                     {item.toggle && (
-                      <div className={`w-12 h-6 rounded-full transition-colors ${item.checked ? 'bg-pink-600' : 'bg-gray-300'}`}>
+                      <div className={`w-12 h-6 rounded-full transition-colors ${item.checked ? 'bg-violet-600' : 'bg-gray-300'}`}>
                         <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${item.checked ? 'translate-x-6' : 'translate-x-0.5'} mt-0.5`}></div>
                       </div>
                     )}
@@ -489,7 +489,7 @@ const Settings: React.FC = () => {
         </div>
         {/* Notifications Settings */}
         <div className='space-y-6 mt-6 pb-16'>
-          {/* <div className={`rounded-xl p-6 shadow-sm border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-pink-500' : 'bg-white'}`}>
+          {/* <div className={`rounded-xl p-6 shadow-sm border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-violet-500' : 'bg-white'}`}>
             <h3 className="text-lg font-semibold mb-4">Notification Preferences</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -499,7 +499,7 @@ const Settings: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setNotifications(prev => ({ ...prev, messages: !prev.messages }))}
-                  className={`w-12 h-6 rounded-full transition-colors ${notifications.messages ? 'bg-pink-600' : 'bg-gray-300'}`}
+                  className={`w-12 h-6 rounded-full transition-colors ${notifications.messages ? 'bg-violet-600' : 'bg-gray-300'}`}
                 >
                   <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${notifications.messages ? 'translate-x-6' : 'translate-x-0.5'} mt-0.5`}></div>
                 </button>
@@ -511,7 +511,7 @@ const Settings: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setNotifications(prev => ({ ...prev, reminders: !prev.reminders }))}
-                  className={`w-12 h-6 rounded-full transition-colors ${notifications.reminders ? 'bg-pink-600' : 'bg-gray-300'}`}
+                  className={`w-12 h-6 rounded-full transition-colors ${notifications.reminders ? 'bg-violet-600' : 'bg-gray-300'}`}
                 >
                   <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${notifications.reminders ? 'translate-x-6' : 'translate-x-0.5'} mt-0.5`}></div>
                 </button>
@@ -523,7 +523,7 @@ const Settings: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setNotifications(prev => ({ ...prev, timeline: !prev.timeline }))}
-                  className={`w-12 h-6 rounded-full transition-colors ${notifications.timeline ? 'bg-pink-600' : 'bg-gray-300'}`}
+                  className={`w-12 h-6 rounded-full transition-colors ${notifications.timeline ? 'bg-violet-600' : 'bg-gray-300'}`}
                 >
                   <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${notifications.timeline ? 'translate-x-6' : 'translate-x-0.5'} mt-0.5`}></div>
                 </button>
@@ -538,7 +538,7 @@ const Settings: React.FC = () => {
                 {[...Array(10)].map((_, i) => (
                   <div
                     key={i}
-                    className="absolute text-pink-500 opacity-70 animate-pulse"
+                    className="absolute text-violet-500 opacity-70 animate-pulse"
                     style={{
                       left: `${Math.random() * 100}%`,
                       top: `${Math.random() * 100}%`,
@@ -549,13 +549,13 @@ const Settings: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <div className={`p-6 rounded-2xl shadow-2xl border border-pink-900  shadow-pink-500 max-w-sm w-full relative ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+              <div className={`p-6 rounded-2xl shadow-2xl border border-pink-900  shadow-violet-500 max-w-sm w-full relative ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                  <svg className="w-12 h-12 text-pink-500 drop-shadow animate-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-12 h-12 text-violet-500 drop-shadow animate-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold text-center text-pink-600 mt-6 mb-4">Secure Your Love PIN 💖</h2>
+                <h2 className="text-xl font-bold text-center text-violet-600 mt-6 mb-4">Secure Your Love PIN 💖</h2>
                 {error && <p className="text-red-600 text-sm mb-2 text-center">{error}</p>}
                 <div className="space-y-5">
                   <div>
@@ -606,7 +606,7 @@ const Settings: React.FC = () => {
                   <div className="flex space-x-2 justify-center mt-4">
                     <button
                       onClick={handleChangePin}
-                      className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors transform hover:scale-105"
+                      className="px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition-colors transform hover:scale-105"
                     >
                       Change PIN
                     </button>
@@ -682,13 +682,13 @@ const Settings: React.FC = () => {
             </div>
           )}
           {/* App Info */}
-          <div className={`rounded-xl p-6 shadow-sm border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-pink-500' : 'bg-white'}`}>
+          <div className={`rounded-xl p-6 shadow-sm border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-violet-500' : 'bg-white'}`}>
             <h3 className="text-lg font-semibold mb-4">About</h3>
             <div className="space-y-2 text-sm">
-              <p>LoveConnect v1.0.0</p>
+              <p>Letalk v1.0.0</p>
               <p>Made with ❤️ for couples everywhere</p>
               <p className="text-xs mt-4">
-                © 2025 LoveConnect. All rights reserved.
+                © 2025 Letalk. All rights reserved.
               </p>
             </div>
           </div>

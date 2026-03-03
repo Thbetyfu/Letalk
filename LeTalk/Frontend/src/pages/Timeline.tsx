@@ -174,7 +174,7 @@ const Timeline: React.FC = () => {
           </div>
           <button
             onClick={() => setIsCreating(true)}
-            className="p-2 bg-pink-600 text-white rounded-full hover:bg-pink-700"
+            className="p-2 bg-violet-600 text-white rounded-full hover:bg-violet-700"
           >
             <Plus size={20} />
           </button>
@@ -198,7 +198,7 @@ const Timeline: React.FC = () => {
                   type="text"
                   value={newEvent.title || ''}
                   onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                   placeholder="What happened?"
                 />
               </div>
@@ -210,7 +210,7 @@ const Timeline: React.FC = () => {
                 <textarea
                   value={newEvent.description || ''}
                   onChange={(e) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent h-24 resize-none"
+                  className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent h-24 resize-none"
                   placeholder="Tell the story..."
                 />
               </div>
@@ -224,7 +224,7 @@ const Timeline: React.FC = () => {
                     type="date"
                     value={newEvent.date?.toISOString().split('T')[0] || ''}
                     onChange={(e) => setNewEvent(prev => ({ ...prev, date: new Date(e.target.value) }))}
-                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                   />
                 </div>
 
@@ -236,7 +236,7 @@ const Timeline: React.FC = () => {
                     type="text"
                     value={newEvent.location || ''}
                     onChange={(e) => setNewEvent(prev => ({ ...prev, location: e.target.value }))}
-                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                     placeholder="Where did it happen?"
                   />
                 </div>
@@ -248,7 +248,7 @@ const Timeline: React.FC = () => {
                   id="isSpecial"
                   checked={newEvent.isSpecial || false}
                   onChange={(e) => setNewEvent(prev => ({ ...prev, isSpecial: e.target.checked }))}
-                  className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
+                  className="w-4 h-4 text-violet-600 rounded focus:ring-violet-500"
                 />
                 <label htmlFor="isSpecial" className="text-sm text-gray-700">
                   Mark as special milestone
@@ -258,7 +258,7 @@ const Timeline: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={editingEvent ? handleSaveEdit : handleCreateEvent}
-                  className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 flex items-center space-x-2"
+                  className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 flex items-center space-x-2"
                 >
                   <Save size={16} />
                   <span>{editingEvent ? 'Save Changes' : 'Add Memory'}</span>
@@ -298,7 +298,7 @@ const Timeline: React.FC = () => {
               <div className="flex flex-col md:flex-row items-start space-x-0 md:space-x-4 space-y-4 md:space-y-0">
                 {/* Timeline dot */}
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  event.isSpecial ? 'bg-pink-600' : 'bg-pink-300'
+                  event.isSpecial ? 'bg-violet-600' : 'bg-violet-300'
                 }`}>
                   {event.isSpecial ? (
                     <Heart className="w-6 h-6 text-white" fill="white" />
@@ -330,7 +330,7 @@ const Timeline: React.FC = () => {
                     <div className="flex items-center space-x-2 mt-2 md:mt-0">
                       <button
                         onClick={() => handleEditEvent(event)}
-                        className="p-2 text-gray-400 hover:text-pink-600 rounded-lg"
+                        className="p-2 text-gray-400 hover:text-violet-600 rounded-lg"
                       >
                         <Edit3 size={16} />
                       </button>
@@ -356,7 +356,7 @@ const Timeline: React.FC = () => {
                   <div className="flex flex-col md:flex-row items-center justify-between mt-4 pt-4 border-t border-gray-100">
                     <span className="text-sm text-gray-500">Added by {event.createdBy}</span>
                     {event.isSpecial && (
-                      <span className="text-xs px-2 py-1 bg-pink-100 text-pink-600 rounded-full mt-2 md:mt-0">
+                      <span className="text-xs px-2 py-1 bg-pink-100 text-violet-600 rounded-full mt-2 md:mt-0">
                         Special Milestone
                       </span>
                     )}
@@ -370,13 +370,13 @@ const Timeline: React.FC = () => {
         {events.length === 0 && (
           <div className="text-center py-12">
             <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Calendar className="w-8 h-8 text-pink-600" />
+              <Calendar className="w-8 h-8 text-violet-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Start Your Timeline</h3>
             <p className="text-gray-600 mb-4">Create your first memory together!</p>
             <button
               onClick={() => setIsCreating(true)}
-              className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700"
+              className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700"
             >
               Add First Memory
             </button>

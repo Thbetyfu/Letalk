@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Only set up refresh interval after initial authentication
       const refreshInterval = setInterval(async () => {
         try {
-          await fetch('http://localhost:8000/loveconnect/api/refresh-token/', {
+          await fetch('http://localhost:8000/letalk/api/refresh-token/', {
             method: 'POST',
             credentials: 'include'
           });
@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        const response = await fetch('http://localhost:8000/loveconnect/api/get-user/', {
+        const response = await fetch('http://localhost:8000/letalk/api/get-user/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -144,7 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, pin: string): Promise<boolean> => {
     try {
-      const response = await fetch('http://localhost:8000/loveconnect/api/login/', {
+      const response = await fetch('http://localhost:8000/letalk/api/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, pin })
@@ -169,7 +169,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok && data.token) {
         // Login successful - fetch user data
-        const userResponse = await fetch('http://localhost:8000/loveconnect/api/get-user/', {
+        const userResponse = await fetch('http://localhost:8000/letalk/api/get-user/', {
           headers: {
             'Authorization': `Bearer ${data.token}`
           }
@@ -205,7 +205,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (name: string, email: string, gender: string, pin: string): Promise<boolean> => {
     try {
-      const response = await fetch('http://localhost:8000/loveconnect/api/signup/', {
+      const response = await fetch('http://localhost:8000/letalk/api/signup/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -224,7 +224,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       // Optionally call backend logout if needed
-      // await fetch('http://localhost:8000/loveconnect/api/logout/', { method: 'POST' });
+      // await fetch('http://localhost:8000/letalk/api/logout/', { method: 'POST' });
     } catch {
       // Ignore errors
     }
@@ -240,7 +240,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const token = getToken();
       if (!token) return;
 
-      const response = await fetch('http://localhost:8000/loveconnect/api/get-user/', {
+      const response = await fetch('http://localhost:8000/letalk/api/get-user/', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -277,7 +277,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const token = getToken();
         if (!token) return;
 
-        const response = await fetch('http://localhost:8000/loveconnect/api/get-user/', {
+        const response = await fetch('http://localhost:8000/letalk/api/get-user/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }

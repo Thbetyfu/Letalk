@@ -48,7 +48,7 @@ const BottomNavigation: React.FC = () => {
   return (
     <nav className={`fixed z-40 bottom-4 left-1/2 transform -translate-x-1/2 rounded-full w-full max-w-md sm:max-w-lg md:max-w-xl shadow-md backdrop-blur-sm ${
       isDarkMode
-        ? 'bg-pink-300 border-t border-pink-700'
+        ? 'bg-violet-300 border-t border-violet-700'
         : 'bg-pink-200/50 border-t border-pink-200'
     }`}>
       <div className="flex justify-around items-center px-2">
@@ -59,10 +59,10 @@ const BottomNavigation: React.FC = () => {
             className={({ isActive }) =>
               `flex flex-col items-center py-2 rounded-lg transition-colors relative ${
                 isActive
-                  ? 'text-pink-500'
+                  ? 'text-violet-500'
                   : isDarkMode
-                    ? 'text-pink-900 hover:text-pink-500'
-                    : 'text-gray-600 hover:text-pink-600'
+                    ? 'text-pink-900 hover:text-violet-500'
+                    : 'text-gray-600 hover:text-violet-600'
               }`
             }
           >

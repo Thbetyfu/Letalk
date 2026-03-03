@@ -142,7 +142,7 @@ const Chat: React.FC = () => {
           setShowNotification(true);
           setTimeout(() => setShowNotification(false), 3000);
           if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("LoveConnect", {
+            new Notification("Letalk", {
               body: data.type === 'image' ? 'Image received' : data.content,
               icon: "/favicon.ico"
             });
@@ -170,7 +170,7 @@ const Chat: React.FC = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch('http://localhost:8000/loveconnect/api/get-messages/', {
+      const res = await fetch('http://localhost:8000/letalk/api/get-messages/', {
         credentials: 'include'
       });
       const data = await res.json();
@@ -196,7 +196,7 @@ const Chat: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch('http://localhost:8000/loveconnect/api/send-message/', {
+      const response = await fetch('http://localhost:8000/letalk/api/send-message/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -260,7 +260,7 @@ const Chat: React.FC = () => {
   return (
     <div className={`h-screen flex flex-col ${isDarkMode ? 'bg-gray-800' : 'bg-pink-50'}`}>
       {showNotification && (
-        <div className="fixed top-0 left-0 w-full bg-pink-600 text-white text-center py-2 z-50 transition">
+        <div className="fixed top-0 left-0 w-full bg-violet-600 text-white text-center py-2 z-50 transition">
           {notificationMsg}
         </div>
       )}
@@ -284,7 +284,7 @@ const Chat: React.FC = () => {
             <div className="flex-shrink-0">
               {toast.type === 'success' && (
                 <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
-                  <CheckCircle size={18} className="text-pink-600" />
+                  <CheckCircle size={18} className="text-violet-600" />
                 </div>
               )}
               {toast.type === 'error' && (
@@ -318,7 +318,7 @@ const Chat: React.FC = () => {
       <div className={` border-b border-pink-200 p-4 fixed w-full z-10 top-0 animate-slide-in ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center">
               <span className="text-white font-semibold">
                 {user?.partnerName?.charAt(0) || 'P'}
               </span>
@@ -341,7 +341,7 @@ const Chat: React.FC = () => {
           >
             <div
               className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.senderEmail === user?.email
-                ? 'bg-pink-600 text-white'
+                ? 'bg-violet-600 text-white'
                 : 'bg-white text-gray-800 border border-pink-200'
                 }`}
             >
@@ -381,7 +381,7 @@ const Chat: React.FC = () => {
       </div>
 
       {/* Message Input */}
-      <div className={` p-4 fixed bottom-14 w-full mb-6 ${isDarkMode ? 'bg-gray-800 border border-pink-600 rounded-xl' : 'bg-white border-t border-pink-200 '}`}>
+      <div className={` p-4 fixed bottom-14 w-full mb-6 ${isDarkMode ? 'bg-gray-800 border border-violet-600 rounded-xl' : 'bg-white border-t border-pink-200 '}`}>
         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
           <div className="flex-1 relative">
             <input
@@ -389,14 +389,14 @@ const Chat: React.FC = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type a message..."
-              className={`w-full px-4 py-2 pr-12 rounded-full border border-pink-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'} transition-colors`}
+              className={`w-full px-4 py-2 pr-12 rounded-full border border-pink-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'} transition-colors`}
             />
           </div>
 
           <button
             type="submit"
             disabled={!message.trim() || isLoading}
-            className="p-2 bg-pink-600 text-white rounded-full hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-2 bg-violet-600 text-white rounded-full hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Send size={20} />
           </button>

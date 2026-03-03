@@ -74,15 +74,15 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-pink-50 to-purple-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-violet-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="bg-pink-600 p-3 rounded-full w-fit mx-auto mb-4">
+          <div className="bg-violet-600 p-3 rounded-full w-fit mx-auto mb-4">
             <Heart className="w-6 h-6 text-white" fill="white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join LoveConnect and start your journey together</p>
+          <p className="text-gray-600 mt-2">Join Letalk and start your journey together</p>
         </div>
 
         {/* Form */}
@@ -105,7 +105,7 @@ const Signup: React.FC = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                 placeholder="Enter your full name"
                 required
               />
@@ -124,7 +124,7 @@ const Signup: React.FC = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                 placeholder="Enter your email"
                 required
               />
@@ -142,7 +142,7 @@ const Signup: React.FC = () => {
                 name="gender"
                 value={formData.gender}
                 onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent appearance-none bg-white"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent appearance-none bg-white"
                 required
               >
                 <option value="">Select your gender</option>
@@ -169,7 +169,7 @@ const Signup: React.FC = () => {
                 name="pin"
                 value={formData.pin}
                 onChange={handleInputChange}
-                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                 placeholder="Create a 4-digit PIN"
                 maxLength={4}
                 required
@@ -196,7 +196,7 @@ const Signup: React.FC = () => {
                 name="confirmPin"
                 value={formData.confirmPin}
                 onChange={handleInputChange}
-                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                 placeholder="Confirm your PIN"
                 maxLength={4}
                 required
@@ -214,7 +214,7 @@ const Signup: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
@@ -224,7 +224,7 @@ const Signup: React.FC = () => {
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-gray-600">
             Already have an account?{' '}
-            <Link to="/login" className="text-pink-600 hover:text-pink-700 font-medium">
+            <Link to="/login" className="text-violet-600 hover:text-violet-700 font-medium">
               Sign in
             </Link>
           </p>

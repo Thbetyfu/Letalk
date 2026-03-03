@@ -39,7 +39,7 @@ export const ReminderNotificationProvider: React.FC<{ children: React.ReactNode 
         .split('; ')
         .find(row => row.startsWith('loveconnect='))
         ?.split('=')[1];
-        const res = await axios.get('http://localhost:8000/loveconnect/api/reminders/', {
+        const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`
@@ -86,11 +86,11 @@ export const ReminderNotificationProvider: React.FC<{ children: React.ReactNode 
   return (
     <ReminderNotificationContext.Provider value={{ notification, setNotification }}>
       {notification && (
-        <div className="fixed top-6 right-6 z-50 bg-pink-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3 animate-fade-in">
+        <div className="fixed top-6 right-6 z-50 bg-violet-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3 animate-fade-in">
           <Bell className="w-5 h-5 mr-2" />
           <span>{notification}</span>
           <button
-            className="ml-4 px-2 py-1 bg-white text-pink-600 rounded hover:bg-pink-100"
+            className="ml-4 px-2 py-1 bg-white text-violet-600 rounded hover:bg-pink-100"
             onClick={() => setNotification(null)}
           >
             Dismiss

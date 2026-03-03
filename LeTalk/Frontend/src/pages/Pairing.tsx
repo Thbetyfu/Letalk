@@ -49,7 +49,7 @@ const Pairing: React.FC = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8000/loveconnect/api/pair-partner/', {
+      const response = await fetch('http://localhost:8000/letalk/api/pair-partner/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -81,7 +81,7 @@ const Pairing: React.FC = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8000/loveconnect/api/pair-partner/', {
+      const response = await fetch('http://localhost:8000/letalk/api/pair-partner/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -120,11 +120,11 @@ const Pairing: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-pink-50 to-purple-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-violet-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="bg-pink-600 p-3 rounded-full w-fit mx-auto mb-4">
+          <div className="bg-violet-600 p-3 rounded-full w-fit mx-auto mb-4">
             <Heart className="w-6 h-6 text-white" fill="white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">Pair with Your Partner</h1>
@@ -138,7 +138,7 @@ const Pairing: React.FC = () => {
             <div>
               <h3 className="text-sm font-semibold text-blue-800 mb-1">Pairing Requirements</h3>
               <p className="text-xs text-blue-700">
-                LoveConnect only supports traditional male-female partnerships. 
+                Letalk only supports traditional male-female partnerships. 
                 Same-gender pairing is not available.
               </p>
             </div>
@@ -165,9 +165,9 @@ const Pairing: React.FC = () => {
             
             <button
               onClick={() => setMode('generate')}
-              className="w-full p-4 border-2 border-pink-200 rounded-lg hover:border-pink-600 hover:bg-pink-50 transition-colors flex items-center space-x-3"
+              className="w-full p-4 border-2 border-pink-200 rounded-lg hover:border-violet-600 hover:bg-pink-50 transition-colors flex items-center space-x-3"
             >
-              <div className="bg-pink-600 p-2 rounded-full">
+              <div className="bg-violet-600 p-2 rounded-full">
                 <Plus className="w-5 h-5 text-white" />
               </div>
               <div className="text-left">
@@ -178,9 +178,9 @@ const Pairing: React.FC = () => {
 
             <button
               onClick={() => setMode('enter')}
-              className="w-full p-4 border-2 border-pink-200 rounded-lg hover:border-pink-600 hover:bg-pink-50 transition-colors flex items-center space-x-3"
+              className="w-full p-4 border-2 border-pink-200 rounded-lg hover:border-violet-600 hover:bg-pink-50 transition-colors flex items-center space-x-3"
             >
-              <div className="bg-pink-600 p-2 rounded-full">
+              <div className="bg-violet-600 p-2 rounded-full">
                 <Hash className="w-5 h-5 text-white" />
               </div>
               <div className="text-left">
@@ -195,7 +195,7 @@ const Pairing: React.FC = () => {
           <div className="space-y-6">
             {!generatedCode ? (
               <div className="text-center">
-                <Users className="w-16 h-16 text-pink-600 mx-auto mb-4" />
+                <Users className="w-16 h-16 text-violet-600 mx-auto mb-4" />
                 <p className="text-gray-600 mb-6">
                   Generate a unique code that your partner can use to connect with you.
                 </p>
@@ -207,7 +207,7 @@ const Pairing: React.FC = () => {
                 <button
                   onClick={generatePairCode}
                   disabled={isLoading}
-                  className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? 'Generating...' : 'Generate Pair Code'}
                 </button>
@@ -216,12 +216,12 @@ const Pairing: React.FC = () => {
               <div className="text-center">
                 <div className="bg-pink-50 border-2 border-pink-200 rounded-lg p-6 mb-4">
                   <p className="text-sm text-gray-600 mb-2">Your Pair Code:</p>
-                  <div className="text-3xl font-bold text-pink-600 tracking-wider mb-3">
+                  <div className="text-3xl font-bold text-violet-600 tracking-wider mb-3">
                     {generatedCode}
                   </div>
                   <button
                     onClick={copyToClipboard}
-                    className="flex items-center justify-center space-x-2 mx-auto text-pink-600 hover:text-pink-700"
+                    className="flex items-center justify-center space-x-2 mx-auto text-violet-600 hover:text-violet-700"
                   >
                     <Copy size={16} />
                     <span className="text-sm">Copy Code</span>
@@ -233,7 +233,7 @@ const Pairing: React.FC = () => {
                 <div className="text-center">
                   <Link
                     to="/login"
-                    className="text-pink-600 hover:text-pink-700 text-sm font-medium"
+                    className="text-violet-600 hover:text-violet-700 text-sm font-medium"
                   >
                     ← Back to Login
                   </Link>
@@ -245,7 +245,7 @@ const Pairing: React.FC = () => {
               <div className="text-center">
                 <button
                   onClick={() => setMode('select')}
-                  className="text-pink-600 hover:text-pink-700 text-sm font-medium"
+                  className="text-violet-600 hover:text-violet-700 text-sm font-medium"
                 >
                   ← Back to Options
                 </button>
@@ -257,7 +257,7 @@ const Pairing: React.FC = () => {
         {mode === 'enter' && (
           <div className="space-y-6">
             <div className="text-center">
-              <Hash className="w-16 h-16 text-pink-600 mx-auto mb-4" />
+              <Hash className="w-16 h-16 text-violet-600 mx-auto mb-4" />
               <p className="text-gray-600 mb-6">
                 Enter the 6-character code shared by your partner.
               </p>
@@ -278,7 +278,7 @@ const Pairing: React.FC = () => {
                 id="pairCode"
                 value={pairCode}
                 onChange={handlePairCodeChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-center text-2xl font-bold tracking-wider"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent text-center text-2xl font-bold tracking-wider"
                 placeholder="ABC123"
                 maxLength={6}
                 style={{ textTransform: 'uppercase' }}
@@ -288,7 +288,7 @@ const Pairing: React.FC = () => {
             <button
               onClick={enterPairCode}
               disabled={isLoading || pairCode.length !== 6}
-              className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? 'Pairing...' : 'Pair with Partner'}
             </button>
@@ -296,7 +296,7 @@ const Pairing: React.FC = () => {
             <div className="text-center">
               <button
                 onClick={() => setMode('select')}
-                className="text-pink-600 hover:text-pink-700 text-sm font-medium"
+                className="text-violet-600 hover:text-violet-700 text-sm font-medium"
               >
                 ← Back to Options
               </button>
@@ -308,7 +308,7 @@ const Pairing: React.FC = () => {
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-gray-600 text-sm">
             Need help?{' '}
-            <Link to="/support" className="text-pink-600 hover:text-pink-700 font-medium">
+            <Link to="/support" className="text-violet-600 hover:text-violet-700 font-medium">
               Contact Support
             </Link>
           </p>

@@ -20,7 +20,7 @@ const Login: React.FC = () => {
 
   const fetchBreakupStatus = async (email: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/loveconnect/api/breakup-status?email=${encodeURIComponent(email)}`, {
+      const res = await fetch(`http://localhost:8000/letalk/api/breakup-status?email=${encodeURIComponent(email)}`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -36,7 +36,7 @@ const Login: React.FC = () => {
 
   const sendPatchupRequest = async () => {
     try {
-      const res = await fetch('http://localhost:8000/loveconnect/api/request-patchup/', {
+      const res = await fetch('http://localhost:8000/letalk/api/request-patchup/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -85,15 +85,15 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-pink-50 to-purple-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-violet-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="bg-pink-600 p-3 rounded-full w-fit mx-auto mb-4">
+          <div className="bg-violet-600 p-3 rounded-full w-fit mx-auto mb-4">
             <Heart className="w-6 h-6 text-white" fill="white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to your LoveConnect account</p>
+          <p className="text-gray-600 mt-2">Sign in to your Letalk account</p>
         </div>
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -113,7 +113,7 @@ const Login: React.FC = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                 placeholder="Enter your email"
                 required
               />
@@ -133,7 +133,7 @@ const Login: React.FC = () => {
                   const value = e.target.value.replace(/\D/g, '').slice(0, 4);
                   setPin(value);
                 }}
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                 placeholder="Enter your PIN"
                 maxLength={4}
                 required
@@ -150,7 +150,7 @@ const Login: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-pink-600 text-white py-2 rounded-lg font-semibold hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-violet-600 text-white py-2 rounded-lg font-semibold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
@@ -168,7 +168,7 @@ const Login: React.FC = () => {
                 try {
                   const decoded: any = jwtDecode(token);
                   const email = decoded?.email;
-                  const res = await fetch('http://localhost:8000/loveconnect/api/google-signin/', {
+                  const res = await fetch('http://localhost:8000/letalk/api/google-signin/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -211,14 +211,14 @@ const Login: React.FC = () => {
               {!youRequested && (
                 <>
                   {partnerRequested && (
-                    <p className="text-xs text-pink-600 font-medium mb-1">
+                    <p className="text-xs text-violet-600 font-medium mb-1">
                       Your partner is ready to patch things up 💗
                     </p>
                   )}
                   <button
                     onClick={sendPatchupRequest}
                     type="button"
-                    className="mt-1 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 w-full"
+                    className="mt-1 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 w-full"
                   >
                     Send Patch-Up Request 💌
                   </button>
@@ -237,7 +237,7 @@ const Login: React.FC = () => {
         <div className="mt-4 text-center">
           <Link
             to="/forgot-pin"
-            className="text-pink-600 hover:text-pink-700 text-sm font-medium"
+            className="text-violet-600 hover:text-violet-700 text-sm font-medium"
           >
             Forgot your PIN?
           </Link>
@@ -245,7 +245,7 @@ const Login: React.FC = () => {
         <div className="mt-6 pt-4 border-t border-gray-200 text-center">
           <p className="text-gray-600">
             Don't have an account?{' '}
-            <Link to="/signup" className="text-pink-600 hover:text-pink-700 font-medium">
+            <Link to="/signup" className="text-violet-600 hover:text-violet-700 font-medium">
               Sign up
             </Link>
           </p>

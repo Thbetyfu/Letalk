@@ -19,19 +19,19 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from './components/ThemeContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ForgotPin from './pages/ForgotPin';
-import { Heart } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import Support from './pages/Support';
 import NotFound from './pages/NotFound';
 
 // Loading component
 const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-gradient-to-br from-pink-100 via-pink-50 to-purple-100 flex items-center justify-center">
+  <div className="min-h-screen bg-gradient-to-br from-slate-100 via-violet-50 to-indigo-100 flex items-center justify-center">
     <div className="text-center">
-      <div className="bg-pink-600 p-3 rounded-full w-fit mx-auto mb-4 animate-pulse">
-        <Heart className="w-6 h-6 text-white" fill="white" />
+      <div className="bg-violet-600 p-3 rounded-full w-fit mx-auto mb-4 animate-float">
+        <Bot className="w-6 h-6 text-white" />
       </div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-2">LoveConnect</h1>
-      <p className="text-gray-600">Loading your love story...</p>
+      <h1 className="text-2xl font-bold text-gray-800 mb-2">Letalk</h1>
+      <p className="text-gray-600">Memuat AI Mediator kamu...</p>
     </div>
   </div>
 );
@@ -87,15 +87,15 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-   <ThemeProvider>
-    <AuthProvider>
-      <ChatProvider>
-        <GoogleOAuthProvider clientId="1037758248458-o372odjqq94ctstj66pcrt601058hn1k.apps.googleusercontent.com">
-          <AppContent />
-        </GoogleOAuthProvider>
-      </ChatProvider>
-    </AuthProvider>
-   </ThemeProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ChatProvider>
+          <GoogleOAuthProvider clientId="1037758248458-o372odjqq94ctstj66pcrt601058hn1k.apps.googleusercontent.com">
+            <AppContent />
+          </GoogleOAuthProvider>
+        </ChatProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

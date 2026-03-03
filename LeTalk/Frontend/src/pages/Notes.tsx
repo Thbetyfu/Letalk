@@ -54,7 +54,7 @@ const Notes: React.FC = () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    fetch('http://localhost:8000/loveconnect/api/notes/', {
+    fetch('http://localhost:8000/letalk/api/notes/', {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -99,7 +99,7 @@ const Notes: React.FC = () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    const res = await fetch(`http://localhost:8000/loveconnect/api/notes/create/`, {
+    const res = await fetch(`http://localhost:8000/letalk/api/notes/create/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(newNoteData),
@@ -136,7 +136,7 @@ const Notes: React.FC = () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-      const res = await fetch(`http://localhost:8000/loveconnect/api/notes/${editingNote.id}/`, {
+      const res = await fetch(`http://localhost:8000/letalk/api/notes/${editingNote.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -172,7 +172,7 @@ const Notes: React.FC = () => {
       .find(row => row.startsWith('loveconnect='))
       ?.split('=')[1];
 
-    const res = await fetch(`http://localhost:8000/loveconnect/api/notes/${id}/delete/`, {
+    const res = await fetch(`http://localhost:8000/letalk/api/notes/${id}/delete/`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
@@ -191,7 +191,7 @@ const Notes: React.FC = () => {
   };
 
   const toggleFavorite = async (id: string) => {
-    const res = await fetch(`http://localhost:8000/loveconnect/api/notes/${id}/favorite/`, { method: 'PATCH', credentials: 'include' });
+    const res = await fetch(`http://localhost:8000/letalk/api/notes/${id}/favorite/`, { method: 'PATCH', credentials: 'include' });
     const data = await res.json();
     if (res.ok && data.isFavorite !== undefined) {
       setNotes(prev =>
@@ -236,7 +236,7 @@ const Notes: React.FC = () => {
             <div className="flex-shrink-0">
               {toast.type === 'success' && (
                 <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
-                  <CheckCircle size={18} className="text-pink-600" />
+                  <CheckCircle size={18} className="text-violet-600" />
                 </div>
               )}
               {toast.type === 'error' && (
@@ -266,12 +266,12 @@ const Notes: React.FC = () => {
       {/* Sidebar - Hidden on mobile when note is selected */}
       <div className={`w-full md:w-1/3 border-r ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-pink-200 bg-white'} flex flex-col ${selectedNote ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
-        <div className={`p-4 border-b ${isDarkMode ? 'border-pink-700 bg-gray-800' : 'border-pink-200 bg-white'} fixed w-full top-0 left-0 z-40 shadow-sm`}>
+        <div className={`p-4 border-b ${isDarkMode ? 'border-violet-700 bg-gray-800' : 'border-pink-200 bg-white'} fixed w-full top-0 left-0 z-40 shadow-sm`}>
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold">Our Notes</h1>
             <button
               onClick={handleCreateNote}
-              className="p-2 bg-pink-600 text-white rounded-full hover:bg-pink-700"
+              className="p-2 bg-violet-600 text-white rounded-full hover:bg-violet-700"
             >
               <Plus size={20} />
             </button>
@@ -285,7 +285,7 @@ const Notes: React.FC = () => {
               placeholder="Search notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
+              className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
             />
           </div>
         </div>
@@ -297,7 +297,7 @@ const Notes: React.FC = () => {
               <p className={` ${isDarkMode ? 'text-gray-50' : 'text-gray-500'}`}>No notes found</p>
               <button
                 onClick={handleCreateNote}
-                className="mt-4 text-pink-600 hover:text-pink-700 font-medium"
+                className="mt-4 text-violet-600 hover:text-violet-700 font-medium"
               >
                 Create your first note
               </button>
@@ -308,7 +308,7 @@ const Notes: React.FC = () => {
                 <div
                   key={note.id}
                   onClick={() => setSelectedNote(note)}
-                  className={`p-4 rounded-lg cursor-pointer transition-all ${note.color} ${selectedNote?.id === note.id ? 'ring-2 ring-pink-500' : 'hover:shadow-md'}`}
+                  className={`p-4 rounded-lg cursor-pointer transition-all ${note.color} ${selectedNote?.id === note.id ? 'ring-2 ring-violet-500' : 'hover:shadow-md'}`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h3 className={`font-semibold line-clamp-1 ${isDarkMode ? 'text-gray-800' : 'text-gray-800'}`}>{note.title}</h3>
@@ -317,7 +317,7 @@ const Notes: React.FC = () => {
                         e.stopPropagation();
                         toggleFavorite(note.id);
                       }}
-                      className={`p-1 rounded ${note.isFavorite ? 'text-pink-600' : 'text-gray-400 hover:text-pink-600'}`}
+                      className={`p-1 rounded ${note.isFavorite ? 'text-violet-600' : 'text-gray-400 hover:text-violet-600'}`}
                     >
                       <Heart size={16} fill={note.isFavorite ? 'currentColor' : 'none'} />
                     </button>
@@ -380,7 +380,7 @@ const Notes: React.FC = () => {
                           setIsEditing(true);
                           setEditingNote(selectedNote);
                         }}
-                        className="p-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
+                        className="p-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700"
                       >
                         <Edit3 size={16} />
                       </button>
@@ -440,7 +440,7 @@ const Notes: React.FC = () => {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center p-4">
               <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Edit3 className="w-8 h-8 text-pink-600" />
+                <Edit3 className="w-8 h-8 text-violet-600" />
               </div>
               <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Select a note to view</h3>
               <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Choose a note from the sidebar to start reading or editing</p>

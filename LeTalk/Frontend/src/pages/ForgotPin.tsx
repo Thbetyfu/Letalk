@@ -19,7 +19,7 @@ const ForgotPin: React.FC = () => {
     setMessage('');
     if (step === 'email') {
       try {
-        const res = await fetch('http://localhost:8000/loveconnect/api/forgot-pin/', {
+        const res = await fetch('http://localhost:8000/letalk/api/forgot-pin/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
@@ -44,7 +44,7 @@ const ForgotPin: React.FC = () => {
         return;
       }
       try {
-        const res = await fetch('http://localhost:8000/loveconnect/api/verify-reset-pin/', {
+        const res = await fetch('http://localhost:8000/letalk/api/verify-reset-pin/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, resetCode: otp, newPin })
@@ -71,7 +71,7 @@ const ForgotPin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-pink-50 to-purple-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-violet-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Forgot PIN?</h1>
@@ -95,7 +95,7 @@ const ForgotPin: React.FC = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                     placeholder="Enter your email"
                     required
                   />
@@ -104,7 +104,7 @@ const ForgotPin: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoading ? 'Sending...' : 'Send OTP'}
               </button>
@@ -119,7 +119,7 @@ const ForgotPin: React.FC = () => {
                   id="otp"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                   placeholder="6-digit code"
                   maxLength={6}
                   required
@@ -132,7 +132,7 @@ const ForgotPin: React.FC = () => {
                   id="newPin"
                   value={newPin}
                   onChange={(e) => setNewPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                   placeholder="Enter new PIN"
                   maxLength={4}
                   required
@@ -141,7 +141,7 @@ const ForgotPin: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoading ? 'Verifying...' : 'Verify & Change PIN'}
               </button>
@@ -149,7 +149,7 @@ const ForgotPin: React.FC = () => {
           )}
         </form>
         <div className="mt-6 text-center">
-          <Link to="/login" className="text-pink-600 hover:text-pink-700 text-sm font-medium">Back to Login</Link>
+          <Link to="/login" className="text-violet-600 hover:text-violet-700 text-sm font-medium">Back to Login</Link>
         </div>
       </div>
     </div>
