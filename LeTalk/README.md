@@ -14,13 +14,13 @@ Letalk adalah aplikasi chat untuk pasangan yang dilengkapi AI Mediator untuk men
 
 ## 🏗️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React (TypeScript) + Vite + Tailwind CSS |
-| Backend | Django + Django REST Framework + Channels |
-| AI/ML | FastAPI + HuggingFace Transformers + Google Gemini |
-| Database | MongoDB + Redis |
-| DevOps | Docker + Docker Compose |
+| Layer     | Technology                                            |
+|-----------|-------------------------------------------------------|
+| Frontend  | React (TypeScript) + Vite + Tailwind CSS              |
+| Backend   | Django + Django REST Framework + Channels             |
+| AI/ML     | FastAPI + HuggingFace Transformers + Google Gemini    |
+| Database  | MongoDB + Redis                                       |
+| DevOps    | Docker + Docker Compose                               |
 
 ## 🚀 Getting Started
 

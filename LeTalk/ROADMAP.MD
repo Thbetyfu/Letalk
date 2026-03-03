@@ -13,11 +13,11 @@ Prioritas Utama — Dikerjakan paling pertama sebelum apapun
 ## Phase 1 — Foundation (Backend + Auth) 🔐
 Semua fitur bergantung pada fase ini
 
-- [ ] User Registration & Login (JWT)
-- [ ] Google OAuth login
-- [ ] Sistem Pairing (invite kode untuk menghubungkan pasangan)
-- [ ] Profile completion
-- [ ] MongoDB connection setup
+- [x] User Registration & Login (JWT)
+- [x] Google OAuth login
+- [x] Sistem Pairing (invite kode untuk menghubungkan pasangan)
+- [x] Profile completion
+- [x] MongoDB connection setup
 
 ## Phase 2 — Core Chat 💬
 Inti dari aplikasi — harus jalan dulu sebelum AI diintegrasikan
