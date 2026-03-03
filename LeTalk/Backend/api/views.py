@@ -20,11 +20,11 @@ load_dotenv()
 
 # MongoDB Connection
 client = MongoClient(os.getenv('MONGODB_URI'))
-db = client['LoveConnect']
+db = client['Letalk']
 users_collection = db['users']
 
 # Secret Key for JWT
-JWT_SECRET = 'letalk'
+JWT_SECRET = os.getenv('JWT_SECRET', 'letalk-dev-secret')
 JWT_ALGORITHM = 'HS256'
 
 def generate_partner_code():
@@ -35,21 +35,21 @@ def generate_partner_code():
 def send_reset_email(to_email, reset_code):
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    sender_email = os.getenv('LOVE_CONNECT_EMAIL')
-    sender_password = os.getenv('LOVE_CONNECT_EMAIL_PASSWORD')
-    subject = 'LoveConnect PIN Reset Code'
+    sender_email = os.getenv('LETALK_EMAIL')
+    sender_password = os.getenv('LETALK_EMAIL_PASSWORD')
+    subject = 'Letalk PIN Reset Code'
     body = f"""
     <html>
-        <body style="font-family: 'Segoe UI', Arial, sans-serif; color: #d72660; background: #fff0f6; padding: 0; margin: 0;">
-            <div style="max-width: 480px; margin: 40px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px #e11d4822; padding: 36px 28px;">
+        <body style="font-family: 'Segoe UI', Arial, sans-serif; color: #7c3aed; background: #f5f3ff; padding: 0; margin: 0;">
+            <div style="max-width: 480px; margin: 40px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px #7c3aed22; padding: 36px 28px;">
             <div style="text-align: center;">
                 <div style="font-size: 2.5em; margin-bottom: 8px;">💖</div>
-                <h2 style="margin: 0; color: #d72660; font-weight: 700; letter-spacing: 1px;">LoveConnect</h2>
-                <p style="color: #b91c4b; margin-top: 8px; font-size: 1.1em;">A little love, a little magic ✨</p>
+                <h2 style="margin: 0; color: #7c3aed; font-weight: 700; letter-spacing: 1px;">Letalk</h2>
+                <p style="color: #6d28d9; margin-top: 8px; font-size: 1.1em;">Chat lebih cerdas, konflik lebih jarang ✨</p>
             </div>
-            <hr style="border: none; border-top: 2px dashed #f9a8d4; margin: 24px 0;">
+            <hr style="border: none; border-top: 2px dashed #c4b5fd; margin: 24px 0;">
             <p style="font-size: 1.1em;">Hi there <span style="font-size: 1.2em;">💌</span>,</p>
-            <p>We received a request to reset your <b>LoveConnect</b> PIN.</p>
+            <p>We received a request to reset your <b>Letalk</b> PIN.</p>
             <p style="margin-bottom: 0.5em;">Your one-time PIN reset code is:</p>
             <div style="margin: 24px 0; text-align: center;">
                 <span style="display: inline-block; font-size: 2.8em; font-weight: bold; letter-spacing: 12px; color: #fff; background: linear-gradient(90deg,#e11d48 60%,#f472b6 100%); padding: 20px 40px; border-radius: 16px; border: 3px solid #e11d48; box-shadow: 0 2px 12px #f472b655;">
@@ -57,11 +57,11 @@ def send_reset_email(to_email, reset_code):
                 </span>
             </div>
             <p style="font-size: 1.05em;">Please enter this code in the app to set a new PIN.<br>
-            <span style="color: #d72660; font-weight: 500;">This code is valid for <b>15 minutes</b>.</span></p>
+            <span style="color: #7c3aed; font-weight: 500;">This code is valid for <b>15 minutes</b>.</span></p>
             <p style="color: #888; font-size: 0.98em;">If you did not request a PIN reset, you can safely ignore this email.</p>
-            <hr style="border: none; border-top: 2px dashed #f9a8d4; margin: 24px 0;">
-            <p style="margin-top: 32px; color: #b91c4b; font-size: 1.1em;">With love,<br>
-                <b>The LoveConnect Team</b> <span style="font-size: 1.2em;">💕</span>
+            <hr style="border: none; border-top: 2px dashed #c4b5fd; margin: 24px 0;">
+            <p style="margin-top: 32px; color: #6d28d9; font-size: 1.1em;">With love,<br>
+                <b>The Letalk Team</b> <span style="font-size: 1.2em;">💕</span>
             </p>
             </div>
         </body>
@@ -99,29 +99,29 @@ def support_message(request):
 
         # Compose beautiful HTML email
         to_email = 'loveconnect.haaka@gmail.com'
-        subject = f"LoveConnect Support Request from {name}"
+        subject = f"Letalk Support Request from {name}"
         body = f"""
         <html>
-            <body style="font-family: 'Segoe UI', Arial, sans-serif; color: #d72660; background: #fff0f6; padding: 0; margin: 0;">
-                <div style="max-width: 480px; margin: 40px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px #e11d4822; padding: 36px 28px;">
+            <body style="font-family: 'Segoe UI', Arial, sans-serif; color: #7c3aed; background: #f5f3ff; padding: 0; margin: 0;">
+                <div style="max-width: 480px; margin: 40px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px #7c3aed22; padding: 36px 28px;">
                     <div style="text-align: center;">
                         <div style="font-size: 2.5em; margin-bottom: 8px;">💖</div>
-                        <h2 style="margin: 0; color: #d72660; font-weight: 700; letter-spacing: 1px;">LoveConnect</h2>
-                        <p style="color: #b91c4b; margin-top: 8px; font-size: 1.1em;">A little love, a little magic ✨</p>
+                        <h2 style="margin: 0; color: #7c3aed; font-weight: 700; letter-spacing: 1px;">Letalk</h2>
+                        <p style="color: #6d28d9; margin-top: 8px; font-size: 1.1em;">Chat lebih cerdas, konflik lebih jarang ✨</p>
                     </div>
-                    <hr style="border: none; border-top: 2px dashed #f9a8d4; margin: 24px 0;">
+                    <hr style="border: none; border-top: 2px dashed #c4b5fd; margin: 24px 0;">
                     <p style="font-size: 1.1em;">You have received a new <b>Support Request</b> 💌</p>
-                    <div style="margin: 24px 0; background: #f9a8d4; border-radius: 12px; padding: 18px 20px;">
-                        <p style="margin: 0; color: #b91c4b; font-size: 1.08em;"><b>Name:</b> {name}</p>
-                        <p style="margin: 0; color: #b91c4b; font-size: 1.08em;"><b>Email:</b> <a href="mailto:{email}" style="color: #d72660; text-decoration: underline;">{email}</a></p>
+                    <div style="margin: 24px 0; background: #c4b5fd; border-radius: 12px; padding: 18px 20px;">
+                        <p style="margin: 0; color: #6d28d9; font-size: 1.08em;"><b>Name:</b> {name}</p>
+                        <p style="margin: 0; color: #6d28d9; font-size: 1.08em;"><b>Email:</b> <a href="mailto:{email}" style="color: #7c3aed; text-decoration: underline;">{email}</a></p>
                     </div>
-                    <div style="margin: 24px 0; background: #fdf2f8; border-radius: 12px; padding: 18px 20px;">
-                        <p style="margin: 0 0 8px 0; color: #d72660; font-weight: 600; font-size: 1.1em;">Message:</p>
+                    <div style="margin: 24px 0; background: #ede9fe; border-radius: 12px; padding: 18px 20px;">
+                        <p style="margin: 0 0 8px 0; color: #7c3aed; font-weight: 600; font-size: 1.1em;">Message:</p>
                         <div style="color: #444; font-size: 1.08em; white-space: pre-line;">{message}</div>
                     </div>
-                    <hr style="border: none; border-top: 2px dashed #f9a8d4; margin: 24px 0;">
-                    <p style="margin-top: 32px; color: #b91c4b; font-size: 1.1em;">With love,<br>
-                        <b>The LoveConnect Team</b> <span style="font-size: 1.2em;">💕</span>
+                    <hr style="border: none; border-top: 2px dashed #c4b5fd; margin: 24px 0;">
+                    <p style="margin-top: 32px; color: #6d28d9; font-size: 1.1em;">With love,<br>
+                        <b>The Letalk Team</b> <span style="font-size: 1.2em;">💕</span>
                     </p>
                 </div>
             </body>
@@ -130,7 +130,7 @@ def support_message(request):
 
         msg = MIMEMultipart()
         msg['Subject'] = subject
-        msg['From'] = 'support@loveconnect.com'
+        msg['From'] = 'support@letalk.com'
         msg['To'] = to_email
         msg['Reply-To'] = email  # So replies go to the user
         msg.attach(MIMEText(body, 'html'))
@@ -138,8 +138,8 @@ def support_message(request):
         # SMTP config (use app password for Gmail)
         smtp_server = 'smtp.gmail.com'
         smtp_port = 587
-        smtp_user = os.getenv('LOVE_CONNECT_EMAIL')
-        smtp_pass = os.getenv('LOVE_CONNECT_EMAIL_PASSWORD')
+        smtp_user = os.getenv('LETALK_EMAIL')
+        smtp_pass = os.getenv('LETALK_EMAIL_PASSWORD')
 
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()

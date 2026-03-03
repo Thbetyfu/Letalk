@@ -21,8 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(%h^3rhkht08&^^37_zt4mz3u)!m0mas+$3l2l%!dr&qa708(^'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-(%h^3rhkht08&^^37_zt4mz3u)!m0mas+$3l2l%!dr&qa708(^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -96,7 +99,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": ["rediss://default:AS00AAIjcDEyMTAzMzVjMmVmNDI0NDJiYTA5NTEwOTQ0YTI2YTVjNHAxMA@polished-coral-11572.upstash.io:6379"],
+            "hosts": [os.getenv('REDIS_URL', 'redis://localhost:6379')],
         },
     },
 }
@@ -155,16 +158,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5174", 
     "http://localhost:5173", 
-    "https://loveconnect-gilt.vercel.app", 
-    "https://loveconnect.haaka.online",
+    "https://letalk.haaka.online",
     "capacitor://localhost"
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174", 
     "http://localhost:5173", 
-    "https://loveconnect-gilt.vercel.app", 
-    "https://loveconnect.haaka.online",
+    "https://letalk.haaka.online",
     "capacitor://localhost"
 ]
 

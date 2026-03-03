@@ -15,12 +15,12 @@ load_dotenv()
 
 # MongoDB connection
 client = MongoClient(os.getenv('MONGODB_URI'))
-db = client['LoveConnect']
+db = client['Letalk']
 users_collection = db['users']
 extras_collection = db['extras']
 
 # JWT Config
-JWT_SECRET = 'letalk'
+JWT_SECRET = os.getenv('JWT_SECRET', 'letalk-dev-secret')
 JWT_ALGORITHM = 'HS256'
 
 

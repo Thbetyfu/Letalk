@@ -19,10 +19,10 @@ logger = logging.getLogger(__name__)
 
 # MongoDB Connection
 client = MongoClient(os.getenv('MONGODB_URI'))
-db = client['LoveConnect']
+db = client['Letalk']
 users_collection = db['users']
 
-JWT_SECRET = 'letalk'
+JWT_SECRET = os.getenv('JWT_SECRET', 'letalk-dev-secret')
 JWT_ALGORITHM = 'HS256'
 
 

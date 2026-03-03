@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = MongoClient(os.getenv('MONGODB_URI'))
-db = client['LoveConnect']
+db = client['Letalk']
 reminders_collection = db['reminders']
 
 def check_due_reminders():
