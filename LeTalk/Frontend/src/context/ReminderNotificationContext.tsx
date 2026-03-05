@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Bell } from 'lucide-react';
+import { API, getAuthToken } from '../config/api';
 
 interface Reminder {
   id: string;
@@ -39,7 +40,7 @@ export const ReminderNotificationProvider: React.FC<{ children: React.ReactNode 
         .split('; ')
         .find(row => row.startsWith('letalk='))
         ?.split('=')[1];
-        const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
+        const res = await axios.get(API.REMINDERS, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`

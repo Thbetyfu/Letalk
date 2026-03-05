@@ -19,6 +19,7 @@ interface AuthContextType {
   login: (email: string, pin: string) => Promise<boolean>;
   signup: (name: string, email: string, gender: string, pin: string) => Promise<boolean>;
   logout: () => void;
+  googleLogin: (credentialResponse: any) => Promise<boolean>;
   refreshUserData: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -34,13 +35,15 @@ export const useAuth = () => {
   return context;
 };
 
+import { API, setAuthToken, clearAuthToken } from '../config/api';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Utility to get token from localStorage
-  const getToken = () => localStorage.getItem('loveconnect_token');
+  const getToken = () => localStorage.getItem('letalk_token');
 
   // Auto-refresh token every 24 hours (to be safe with 30-day token)
   useEffect(() => {
@@ -48,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Only set up refresh interval after initial authentication
       const refreshInterval = setInterval(async () => {
         try {
-          await fetch('http://localhost:8000/letalk/api/refresh-token/', {
+          await fetch(API.REFRESH_TOKEN, {
             method: 'POST',
             credentials: 'include'
           });
@@ -89,12 +92,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        const response = await fetch('http://localhost:8000/letalk/api/get-user/', {
+        const response = await fetch(API.GET_USER, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        
+
         if (response.ok) {
           const userData = await response.json();
           const user: User = {
@@ -108,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             partnerEmail: userData.pairedWith,
             relationshipStatus: userData.relationshipStatus
           };
-          
+
           setUser(user);
           setIsAuthenticated(true);
           localStorage.setItem('user', JSON.stringify(user));
@@ -117,7 +120,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.removeItem('user');
           setUser(null);
           setIsAuthenticated(false);
-          localStorage.removeItem('loveconnect_token');
+          localStorage.removeItem('letalk_token');
+          clearAuthToken();
         }
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -144,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, pin: string): Promise<boolean> => {
     try {
-      const response = await fetch('http://localhost:8000/letalk/api/login/', {
+      const response = await fetch(API.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, pin })
@@ -153,8 +157,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await response.json();
 
       if (data.token) {
-        // Store token in cookie (expires in 30 days)
-        document.cookie = `letalk=${data.token}; path=/; max-age=${30 * 24 * 60 * 60}; secure; samesite=strict`;
+        // Set cookie and local storage
+        setAuthToken(data.token);
+        localStorage.setItem('letalk_token', data.token);
       }
 
       if (response.status === 403) {
@@ -169,7 +174,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok && data.token) {
         // Login successful - fetch user data
-        const userResponse = await fetch('http://localhost:8000/letalk/api/get-user/', {
+        const userResponse = await fetch(API.GET_USER, {
           headers: {
             'Authorization': `Bearer ${data.token}`
           }
@@ -205,7 +210,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (name: string, email: string, gender: string, pin: string): Promise<boolean> => {
     try {
-      const response = await fetch('http://localhost:8000/letalk/api/signup/', {
+      const response = await fetch(API.SIGNUP, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -223,8 +228,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      // Optionally call backend logout if needed
-      // await fetch('http://localhost:8000/letalk/api/logout/', { method: 'POST' });
+      const token = getToken();
+      if (token) {
+        await fetch(API.LOGOUT, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
     } catch {
       // Ignore errors
     }
@@ -232,7 +242,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('user');
-    localStorage.removeItem('loveconnect_token');
+    localStorage.removeItem('letalk_token');
+    clearAuthToken();
   };
 
   const refreshUserData = async () => {
@@ -240,7 +251,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const token = getToken();
       if (!token) return;
 
-      const response = await fetch('http://localhost:8000/letalk/api/get-user/', {
+      const response = await fetch(API.GET_USER, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -259,7 +270,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           partnerEmail: userData.pairedWith,
           relationshipStatus: userData.relationshipStatus
         };
-        
+
         setUser(user);
         setIsAuthenticated(true);
         localStorage.setItem('user', JSON.stringify(user));
@@ -277,7 +288,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const token = getToken();
         if (!token) return;
 
-        const response = await fetch('http://localhost:8000/letalk/api/get-user/', {
+        const response = await fetch(API.GET_USER, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -310,8 +321,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => window.removeEventListener('online', handleOnline);
   }, []);
 
+  const googleLogin = async (credentialResponse: any): Promise<boolean> => {
+    try {
+      const response = await fetch(API.GOOGLE_SIGNIN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: credentialResponse.credential }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        setAuthToken(data.token);
+        localStorage.setItem('letalk_token', data.token);
+
+        const userResponse = await fetch(API.GET_USER, {
+          headers: { 'Authorization': `Bearer ${data.token}` }
+        });
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          const user: User = {
+            id: userData._id || userData.id,
+            name: userData.name,
+            email: userData.email,
+            gender: userData.gender,
+            isPaired: userData.isPaired,
+            partnerCode: userData.partnerCode,
+            partnerName: userData.partnerName,
+            partnerEmail: userData.pairedWith,
+            relationshipStatus: userData.relationshipStatus
+          };
+          setUser(user);
+          setIsAuthenticated(true);
+          localStorage.setItem('user', JSON.stringify(user));
+          return true;
+        }
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, refreshUserData, isAuthenticated, isLoading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, googleLogin, refreshUserData, isAuthenticated, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../components/ThemeContext';
 import { User, Lock, Bell, Moon, Sun, Trash2, Edit3, Save, X, LogOut, Shield, Heart, Camera, AlertCircle, CheckCircle, Phone } from 'lucide-react';
+import { API } from '../config/api';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -29,9 +30,6 @@ const Settings: React.FC = () => {
   const [showBreakupModal, setShowBreakupModal] = useState(false);
   const [typingEffect, setTypingEffect] = useState('');
 
-  // Floating hearts animation for love modal
-  type Heart = { id: number; left: number; size: number; duration: number };
-  const [hearts, setHearts] = useState<Heart[]>([]);
   const [breakupReason, setBreakupReason] = useState('');
   const [notifications, setNotifications] = useState({
     messages: true,
@@ -58,7 +56,7 @@ const Settings: React.FC = () => {
         showToast('Please provide a reason for the breakup 💔', 'error');
         return;
       }
-      const statusRes = await fetch('http://localhost:8000/letalk/api/breakup/', {
+      const statusRes = await fetch(API.BREAKUP, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -69,7 +67,7 @@ const Settings: React.FC = () => {
         showToast(statusData.error || 'Failed to update breakup status', 'error');
         return;
       }
-      const res = await fetch('http://localhost:8000/letalk/api/logout/', {
+      const res = await fetch(API.LOGOUT, {
         method: 'POST',
         credentials: 'include'
       });
@@ -88,15 +86,22 @@ const Settings: React.FC = () => {
   };
 
   const handleSaveProfile = async () => {
-    await fetch('http://localhost:8000/letalk/api/update-profile/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({ name: editedName }),
-    });
-    setIsEditing(false);
+    try {
+      const res = await fetch(API.UPDATE_PROFILE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ name: editedName }),
+      });
+      if (res.ok) {
+        setIsEditing(false);
+        showToast('Profile updated successfully! 💕', 'success');
+      } else {
+        showToast('Failed to update profile. Try again.', 'error');
+      }
+    } catch {
+      showToast('Network error. Please try again.', 'error');
+    }
   };
 
   const handleChangePin = async () => {
@@ -108,7 +113,7 @@ const Settings: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:8000/letalk/api/change-pin/', {
+      const response = await fetch(API.CHANGE_PIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +125,8 @@ const Settings: React.FC = () => {
         }),
       });
       if (!response.ok) {
-        throw new Error('Failed to change PIN');
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to change PIN');
       }
       setShowChangePinModal(false);
       setCurrentPin(['', '', '', '']);
@@ -140,7 +146,7 @@ const Settings: React.FC = () => {
 
   const handleRelationshipStatusChange = async (newStatus: string) => {
     try {
-      const response = await fetch('http://localhost:8000/letalk/api/relationship-status', {
+      const response = await fetch(API.RELATIONSHIP_STATUS, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -242,7 +248,22 @@ const Settings: React.FC = () => {
     }
   }, [showBreakupModal, breakupReason]);
 
-  const settingSections = [
+  interface SettingItem {
+    icon: any;
+    label: string;
+    action: () => void | Promise<void>;
+    color: string;
+    disabled?: boolean;
+    toggle?: boolean;
+    checked?: boolean;
+  }
+
+  interface SettingSection {
+    title: string;
+    items: SettingItem[];
+  }
+
+  const settingSections: SettingSection[] = [
     {
       title: 'Profile',
       items: [
@@ -404,7 +425,11 @@ const Settings: React.FC = () => {
                   </span>
                 )}
               </div>
-              <button className="absolute bottom-0 right-0 bg-violet-600 text-white p-1 rounded-full hover:bg-violet-700">
+              <button
+                title="Change avatar (coming soon)"
+                onClick={() => showToast('Avatar upload coming soon! 🎨', 'info')}
+                className="absolute bottom-0 right-0 bg-violet-600 text-white p-1 rounded-full hover:bg-violet-700"
+              >
                 <Camera size={12} />
               </button>
             </div>

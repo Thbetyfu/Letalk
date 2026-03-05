@@ -4,6 +4,7 @@ import { Heart, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../context/AuthContext';
+import { API } from '../config/api';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,11 +17,11 @@ const Login: React.FC = () => {
   const [youRequested, setYouRequested] = useState(false);
   const [partnerRequested, setPartnerRequested] = useState(false);
   const navigate = useNavigate();
-  const { login: authLogin, refreshUserData } = useAuth();
+  const { login: authLogin, googleLogin, refreshUserData } = useAuth();
 
   const fetchBreakupStatus = async (email: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/letalk/api/breakup-status?email=${encodeURIComponent(email)}`, {
+      const res = await fetch(`${API.BREAKUP_STATUS}?email=${encodeURIComponent(email)}`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -36,7 +37,7 @@ const Login: React.FC = () => {
 
   const sendPatchupRequest = async () => {
     try {
-      const res = await fetch('http://localhost:8000/letalk/api/request-patchup/', {
+      const res = await fetch(API.REQUEST_PATCHUP, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -168,7 +169,7 @@ const Login: React.FC = () => {
                 try {
                   const decoded: any = jwtDecode(token);
                   const email = decoded?.email;
-                  const res = await fetch('http://localhost:8000/letalk/api/google-signin/', {
+                  const res = await fetch(API.GOOGLE_SIGNIN, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

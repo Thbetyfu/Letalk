@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Heart, Copy, Users, Plus, Hash, Info } from 'lucide-react';
+import { API } from '../config/api';
 
 const Pairing: React.FC = () => {
   const [pairCode, setPairCode] = useState('');
@@ -49,7 +50,7 @@ const Pairing: React.FC = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8000/letalk/api/pair-partner/', {
+      const response = await fetch(API.PAIR_PARTNER, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -81,7 +82,7 @@ const Pairing: React.FC = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8000/letalk/api/pair-partner/', {
+      const response = await fetch(API.PAIR_PARTNER, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

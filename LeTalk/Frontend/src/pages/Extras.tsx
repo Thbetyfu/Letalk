@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Gift, Gamepad2 as GamePad2, Coffee, Plus, Star, BookOpen } from 'lucide-react';
 import { useTheme } from '../components/ThemeContext'; // Adjust the import path as needed
+import { API, getAuthToken } from '../config/api';
 
 interface LoveNote {
   id: string;
@@ -28,67 +29,59 @@ const Extras: React.FC = () => {
   const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
 
   useEffect(() => {
-    // Get token from cookies
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
-
-    fetch('http://localhost:8000/letalk/api/extras/', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+    fetch(API.EXTRAS, {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
       credentials: 'include'
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load extras');
+        return res.json();
+      })
       .then(data => {
-        const jar = data.loveJar.map((note: any) => ({
+        const jar = (data.loveJar || []).map((note: any) => ({
           ...note,
+          id: note._id,
           addedAt: new Date(note.addedAt)
         }));
-        const todos = data.todoList;
+        const todos = (data.todoList || []).map((t: any) => ({
+          ...t,
+          id: t._id
+        }));
         setLoveNotes(jar);
         setTodoItems(todos);
+      })
+      .catch(err => {
+        console.error('Failed to load extras:', err);
       });
   }, []);
 
-const handleAddLoveNote = async () => {
+  const handleAddLoveNote = async () => {
     if (!newLoveNote.trim()) return;
-    
-    // Get token from cookies
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
 
-    const res = await fetch('http://localhost:8000/letalk/api/extras/lovejar/add/', {
+    const res = await fetch(API.LOVEJAR_ADD, {
       method: 'POST',
       credentials: 'include',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${getAuthToken()}`
       },
       body: JSON.stringify({ message: newLoveNote })
     });
     if (res.ok) {
+      const newNote = await res.json();
+      setLoveNotes(prev => [{
+        ...newNote,
+        id: newNote._id,
+        addedAt: new Date(newNote.addedAt)
+      }, ...prev]);
       setNewLoveNote('');
-      const note = await res.json();
-      location.reload(); // OR re-fetch extras
     }
   };
 
   const handleRevealNote = async (id: string) => {
-    // Get token from cookies
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
-
-    await fetch(`http://localhost:8000/letalk/api/extras/lovejar/reveal/${id}/`, {
+    await fetch(API.LOVEJAR_REVEAL(id), {
       method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
       credentials: 'include'
     });
     setLoveNotes(prev =>
@@ -100,40 +93,30 @@ const handleAddLoveNote = async () => {
 
   const handleAddTodo = async () => {
     if (!newTodoItem.trim()) return;
-    
-    // Get token from cookies
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
 
-    const res = await fetch('http://localhost:8000/letalk/api/extras/todo/add/', {
+    const res = await fetch(API.TODO_ADD, {
       method: 'POST',
       credentials: 'include',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${getAuthToken()}`
       },
       body: JSON.stringify({ title: newTodoItem })
     });
     if (res.ok) {
+      const newTodo = await res.json();
+      setTodoItems(prev => [...prev, {
+        ...newTodo,
+        id: newTodo._id,
+      }]);
       setNewTodoItem('');
-      location.reload(); // OR re-fetch extras
     }
   };
 
   const handleToggleTodo = async (id: string) => {
-    // Get token from cookies
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
-
-    await fetch(`http://localhost:8000/letalk/api/extras/todo/toggle/${id}/`, {
+    await fetch(API.TODO_TOGGLE(id), {
       method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
       credentials: 'include'
     });
     setTodoItems(prev =>
@@ -144,34 +127,18 @@ const handleAddLoveNote = async () => {
   };
 
   const handleDeleteTodo = async (id: string) => {
-    // Get token from cookies
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
-
-    await fetch(`http://localhost:8000/letalk/api/extras/todo/delete/${id}/`, {
+    await fetch(API.TODO_DELETE(id), {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
       credentials: 'include'
     });
     setTodoItems(prev => prev.filter(todo => todo.id !== id));
   };
 
   const handleDeleteLoveNote = async (id: string) => {
-    // Get token from cookies
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
-
-    await fetch(`http://localhost:8000/letalk/api/extras/lovejar/delete/${id}/`, {
+    await fetch(API.LOVEJAR_DELETE(id), {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
       credentials: 'include'
     });
     setLoveNotes(prev => prev.filter(note => note.id !== id));
@@ -201,11 +168,10 @@ const handleAddLoveNote = async () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 border-b-2 font-medium transition-all duration-200 whitespace-nowrap min-w-0 flex-shrink-0 ${
-                  activeTab === tab.id
+                className={`flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 border-b-2 font-medium transition-all duration-200 whitespace-nowrap min-w-0 flex-shrink-0 ${activeTab === tab.id
                     ? 'border-violet-600 text-violet-600 bg-pink-50'
                     : `border-transparent ${isDarkMode ? 'text-gray-400 hover:text-pink-400 hover:bg-gray-700' : 'text-gray-600 hover:text-violet-600 hover:bg-pink-25'}`
-                }`}
+                  }`}
               >
                 <tab.icon size={18} className="sm:w-5 sm:h-5" />
                 <span className="text-sm sm:text-base">{tab.label}</span>
@@ -252,14 +218,22 @@ const handleAddLoveNote = async () => {
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {loveNotes.length === 0 && (
+                <div className="col-span-full text-center py-12">
+                  <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Heart className="w-8 h-8 text-violet-600" />
+                  </div>
+                  <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Your Love Jar is empty</h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Add your first sweet message above! 💕</p>
+                </div>
+              )}
               {loveNotes.map((note) => (
                 <div
                   key={note.id}
-                  className={`relative rounded-xl p-4 sm:p-6 shadow-sm border-2 transition-all duration-200 ${
-                    note.isRevealed
+                  className={`relative rounded-xl p-4 sm:p-6 shadow-sm border-2 transition-all duration-200 ${note.isRevealed
                       ? `border-pink-200 hover:shadow-md ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
                       : `border-pink-400 cursor-pointer hover:border-violet-500 hover:shadow-md transform hover:scale-[1.02] ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
-                  }`}
+                    }`}
                   onClick={() => !note.isRevealed && handleRevealNote(note.id)}
                 >
                   {/* Delete Button (Always visible) */}
@@ -334,28 +308,25 @@ const handleAddLoveNote = async () => {
                 {todoItems.map((item) => (
                   <div
                     key={item.id}
-                    className={`relative flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
-                      item.isCompleted
+                    className={`relative flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${item.isCompleted
                         ? 'bg-green-50 border-green-200'
                         : `hover:border-violet-700 hover:shadow-sm ${isDarkMode ? 'bg-gray-700 border-pink-400' : 'bg-gray-50 border-gay-500'}`
-                    }`}
+                      }`}
                   >
                     {/* Completion Checkbox */}
                     <button
                       onClick={() => handleToggleTodo(item.id)}
-                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
-                        item.isCompleted
+                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0 ${item.isCompleted
                           ? 'bg-green-600 border-green-600 text-white'
                           : `border-gray-300 hover:border-purple-600 ${isDarkMode ? 'hover:border-purple-400' : ''}`
-                      }`}
+                        }`}
                     >
                       {item.isCompleted && <span className="text-xs sm:text-sm">✓</span>}
                     </button>
                     {/* Title */}
                     <span
-                      className={`flex-1 text-sm sm:text-base transition-all duration-200 ${
-                        item.isCompleted ? 'text-gray-500 line-through' : `text-gray-800 ${isDarkMode ? 'text-gray-300' : ''}`
-                      }`}
+                      className={`flex-1 text-sm sm:text-base transition-all duration-200 ${item.isCompleted ? 'text-gray-500 line-through' : `text-gray-800 ${isDarkMode ? 'text-gray-300' : ''}`
+                        }`}
                     >
                       {item.title}
                     </span>

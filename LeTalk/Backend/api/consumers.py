@@ -32,7 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.pair_code = self.scope['url_route']['kwargs']['pair_code']
         self.user_email = None
         self.user_name = None
-        self.recent_messages = []  # <-- BARU: untuk tracking AI
+        self.recent_messages = await self._load_recent_messages_for_ai()  # <-- BARU: Load dari MongoDB
 
         # Extract token dari query string (sama seperti LoveConnect)
         query_string = self.scope['query_string'].decode()
@@ -72,7 +72,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+        msg_type = data.get("type", "message")
+
+        # Handle mark_seen
+        if msg_type == "mark_seen":
+            await self._mark_messages_seen()
+            return
+
+        # Handle ping/keepalive
+        if msg_type == "ping":
+            await self.send(text_data=json.dumps({"type": "pong"}))
+            return
+
+        # Handle pesan biasa
         message_text = data.get("message", "")
+        if not message_text.strip():
+            return  # Abaikan pesan kosong
+
         sender_name = data.get("senderName", self.user_name)
         sender_email = data.get("senderEmail", self.user_email)
 
@@ -159,6 +175,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Simpan max 10 pesan terakhir
         self.recent_messages = self.recent_messages[-10:]
 
+        # Update field emotion & toxicity pada pesan yang sudah tersimpan
+        await self._update_message_ai_data(
+            timestamp=msg_data["timestamp"],
+            emotion=top_emotion,
+            toxicity_score=toxicity_score
+        )
+
         # --- CEK KONFLIK ---
         if conflict_manager.detect_conflict(self.recent_messages):
             await self._handle_conflict(sender)
@@ -228,6 +251,62 @@ class ChatConsumer(AsyncWebsocketConsumer):
             upsert=True
         )
 
+    async def _update_message_ai_data(self, timestamp: str, emotion: str, toxicity_score: float):
+        """Update field emotion & toxicity pada pesan yang sudah tersimpan."""
+        await sync_to_async(
+            db['conversations'].update_one
+        )(
+            {
+                "pairCode": self.pair_code,
+                "messages.timestamp": timestamp
+            },
+            {
+                "$set": {
+                    "messages.$.emotion": emotion,
+                    "messages.$.toxicity_score": toxicity_score,
+                }
+            }
+        )
+
+    async def _mark_messages_seen(self):
+        """Tandai semua pesan sebagai seen."""
+        await sync_to_async(
+            db['conversations'].update_one
+        )(
+            {"pairCode": self.pair_code},
+            {"$set": {"messages.$[elem].seen": True}},
+            array_filters=[{"elem.senderEmail": {"$ne": self.user_email}}]
+        )
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "seen_update",
+                "message_id": "all",
+                "seen": True
+            }
+        )
+
+    async def _load_recent_messages_for_ai(self) -> list:
+        """Load 10 pesan terakhir dari MongoDB untuk seed AI tracker."""
+        conversation = await sync_to_async(
+            db['conversations'].find_one
+        )({"pairCode": self.pair_code})
+
+        if not conversation or "messages" not in conversation:
+            return []
+
+        recent = conversation["messages"][-10:]
+        return [
+            {
+                "sender": msg.get("senderName", ""),
+                "message": msg.get("message", ""),
+                "top_emotion": msg.get("emotion") or "neutral",
+                "toxicity_score": msg.get("toxicity_score") or 0,
+                "timestamp": msg.get("timestamp", ""),
+            }
+            for msg in recent
+        ]
+
     async def send_previous_messages(self):
         """Kirim pesan-pesan sebelumnya saat user connect."""
         conversation = await sync_to_async(
@@ -290,4 +369,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": "seen_update",
             "message_id": event["message_id"],
             "seen": event["seen"]
+        }))
+
+    async def reminder_alert(self, event):
+        """Handler: reminder alert dari scheduler."""
+        await self.send(text_data=json.dumps({
+            "type": "reminder_alert",
+            "reminder": event["reminder"]
         }))

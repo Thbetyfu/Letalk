@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Calendar, Clock, Repeat, Bell, Edit3, Trash2, Check } from 'lucide-react';
 import axios from 'axios';
 import { useTheme } from '../components/ThemeContext'; // Adjust the import path as needed
+import { API, getAuthToken } from '../config/api';
 
 interface Reminder {
   id: string;
@@ -40,12 +41,9 @@ const Reminders: React.FC = () => {
   useEffect(() => {
     const fetchReminders = async () => {
       try {
-        const token = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('letalk='))
-          ?.split('=')[1];
+        const token = getAuthToken();
 
-        const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
+        const res = await axios.get(API.REMINDERS, {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`
@@ -65,6 +63,13 @@ const Reminders: React.FC = () => {
     fetchReminders();
   }, []);
 
+  // Request browser notification permission
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
   // Notification effect: check every minute for due reminders
   useEffect(() => {
     const interval = setInterval(() => {
@@ -82,8 +87,16 @@ const Reminders: React.FC = () => {
             now >= reminderDateTime &&
             now.getTime() - reminderDateTime.getTime() < 120000
           ) {
-            setNotification(`Reminder: ${reminder.title} - ${reminder.description}`);
+            setNotification(`⏰ ${reminder.title} - ${reminder.description}`);
             setNotifiedIds(prev => [...prev, reminder.id]);
+
+            // Browser Notification
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification(`⏰ Letalk Reminder: ${reminder.title}`, {
+                body: reminder.description,
+                icon: '/favicon.ico',
+              });
+            }
           }
         }
       });
@@ -94,31 +107,43 @@ const Reminders: React.FC = () => {
   const handleCreateReminder = async () => {
     if (newReminder.title && newReminder.description) {
       try {
-        const token = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('letalk='))
-        ?.split('=')[1];
+        const token = getAuthToken();
         if (isEditing && editingReminder) {
           // PATCH to update
           await axios.patch(
-            `http://localhost:8000/letalk/api/reminders/update/${editingReminder.id}/`,
+            API.REMINDER_UPDATE(editingReminder.id),
             newReminder,
-            { 
+            {
               headers: {
                 Authorization: `Bearer ${token}`
               },
-              withCredentials: true }
+              withCredentials: true
+            }
+          );
+          setReminders(prev =>
+            prev.map(r => r.id === editingReminder.id
+              ? { ...r, ...newReminder, id: r.id, date: new Date(newReminder.date as Date) } as Reminder
+              : r
+            )
           );
         } else {
           // POST to create
-          await axios.post(
-            'http://localhost:8000/letalk/api/reminders/create/',
+          const res = await axios.post(
+            API.REMINDER_CREATE,
             newReminder,
-            { headers: {
+            {
+              headers: {
                 Authorization: `Bearer ${token}`
               },
-              withCredentials: true }
+              withCredentials: true
+            }
           );
+          const created = {
+            ...res.data,
+            id: res.data._id,
+            date: new Date(res.data.date)
+          };
+          setReminders(prev => [...prev, created]);
         }
         // Reset UI state
         setIsEditing(false);
@@ -133,19 +158,6 @@ const Reminders: React.FC = () => {
           priority: 'medium'
         });
         setIsCreating(false);
-        // Refresh list
-        const refreshed = await axios.get('http://localhost:8000/letalk/api/reminders/', {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}` // <-- Add this line
-          }
-        });
-        const remindersWithDates = refreshed.data.reminders.map((reminder: any) => ({
-          ...reminder,
-          id: reminder._id,
-          date: new Date(reminder.date)
-        }));
-        setReminders(remindersWithDates);
       } catch (err) {
         console.error('Error saving reminder:', err);
       }
@@ -154,30 +166,17 @@ const Reminders: React.FC = () => {
 
   const toggleComplete = async (id: string) => {
     try {
-      const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
+      const token = getAuthToken();
 
-      await axios.patch(`http://localhost:8000/letalk/api/reminders/complete/${id}/`, null, {
+      await axios.patch(API.REMINDER_COMPLETE(id), null, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      // Convert date strings to Date objects
-      const remindersWithDates = res.data.reminders.map((reminder: any) => ({
-        ...reminder,
-        id: reminder._id,
-        date: new Date(reminder.date)
-      }));
-      setReminders(remindersWithDates);
+      setReminders(prev =>
+        prev.map(r => r.id === id ? { ...r, isCompleted: !r.isCompleted } : r)
+      );
     } catch (err) {
       console.error('Failed to toggle reminder:', err);
     }
@@ -185,30 +184,15 @@ const Reminders: React.FC = () => {
 
   const deleteReminder = async (id: string) => {
     try {
-      const token = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('letalk='))
-        ?.split('=')[1];
+      const token = getAuthToken();
 
-      await axios.delete(`http://localhost:8000/letalk/api/reminders/delete/${id}/`, {
+      await axios.delete(API.REMINDER_DELETE(id), {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      const res = await axios.get('http://localhost:8000/letalk/api/reminders/', {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      // Convert date strings to Date objects
-      const remindersWithDates = res.data.reminders.map((reminder: any) => ({
-        ...reminder,
-        id: reminder._id,
-        date: new Date(reminder.date)
-      }));
-      setReminders(remindersWithDates);
+      setReminders(prev => prev.filter(r => r.id !== id));
     } catch (err) {
       console.error('Failed to delete reminder:', err);
     }
@@ -332,7 +316,11 @@ const Reminders: React.FC = () => {
                   <input
                     type="date"
                     value={newReminder.date?.toISOString().split('T')[0] || ''}
-                    onChange={(e) => setNewReminder(prev => ({ ...prev, date: new Date(e.target.value) }))}
+                    onChange={(e) => {
+                      const [year, month, day] = e.target.value.split('-').map(Number);
+                      const localDate = new Date(year, month - 1, day, 12, 0, 0);
+                      setNewReminder(prev => ({ ...prev, date: localDate }));
+                    }}
                     className={`w-full px-4 py-3 sm:px-5 sm:py-3 border rounded-xl focus:ring-2 focus:ring-violet-500 text-sm sm:text-base transition-all duration-200 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'border-pink-200'}`}
                   />
                 </div>
@@ -450,29 +438,26 @@ const Reminders: React.FC = () => {
                   <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
                     <button
                       onClick={() => toggleComplete(reminder.id)}
-                      className={`mt-1 p-2 sm:p-2.5 rounded-full transition-all duration-200 flex-shrink-0 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center ${
-                        reminder.isCompleted
-                          ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                          : 'bg-pink-100 text-violet-600 hover:bg-pink-200 transform hover:scale-105'
-                      }`}
+                      className={`mt-1 p-2 sm:p-2.5 rounded-full transition-all duration-200 flex-shrink-0 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center ${reminder.isCompleted
+                        ? 'bg-green-100 text-green-600 hover:bg-green-200'
+                        : 'bg-pink-100 text-violet-600 hover:bg-pink-200 transform hover:scale-105'
+                        }`}
                       aria-label={reminder.isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                     >
                       <Check size={16} className="sm:w-5 sm:h-5" />
                     </button>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2 sm:mb-3">
-                        <h3 className={`font-semibold text-sm sm:text-base leading-tight ${
-                          reminder.isCompleted ? ' line-through' : `${isDarkMode ? 'text-gray-200' : 'text-gray-800 '}`
-                        }`}>
+                        <h3 className={`font-semibold text-sm sm:text-base leading-tight ${reminder.isCompleted ? ' line-through' : `${isDarkMode ? 'text-gray-200' : 'text-gray-800 '}`
+                          }`}>
                           {reminder.title}
                         </h3>
                         <span className={`text-xs px-2 py-1 rounded-full border font-medium w-fit ${getPriorityColor(reminder.priority)}`}>
                           {reminder.priority}
                         </span>
                       </div>
-                      <p className={`text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed ${
-                        reminder.isCompleted ? 'text-gray-400' : `text-gray-600 ${isDarkMode ? 'text-gray-400' : ''}`
-                      }`}>
+                      <p className={`text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed ${reminder.isCompleted ? 'text-gray-400' : `text-gray-600 ${isDarkMode ? 'text-gray-400' : ''}`
+                        }`}>
                         {reminder.description}
                       </p>
                       <div className={`flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>

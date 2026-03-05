@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail } from 'lucide-react';
+import { API } from '../config/api';
 
 const ForgotPin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ const ForgotPin: React.FC = () => {
     setMessage('');
     if (step === 'email') {
       try {
-        const res = await fetch('http://localhost:8000/letalk/api/forgot-pin/', {
+        const res = await fetch(API.FORGOT_PIN, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
@@ -44,7 +45,7 @@ const ForgotPin: React.FC = () => {
         return;
       }
       try {
-        const res = await fetch('http://localhost:8000/letalk/api/verify-reset-pin/', {
+        const res = await fetch(API.VERIFY_RESET_PIN, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, resetCode: otp, newPin })

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit3, Trash2, Heart, Save, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { useTheme } from '../components/ThemeContext'; // Adjust the import path as needed
+import { API, getAuthToken } from '../config/api';
 
 interface Note {
   id: string;
@@ -25,6 +26,7 @@ const Notes: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingNote, setEditingNote] = useState<Partial<Note>>({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -49,12 +51,9 @@ const Notes: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
 
   useEffect(() => {
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
+    const token = getAuthToken();
 
-    fetch('http://localhost:8000/letalk/api/notes/', {
+    fetch(API.NOTES, {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -94,12 +93,9 @@ const Notes: React.FC = () => {
       isFavorite: false
     };
     showToast('Creating a new note for your thoughts... 💕', 'info');
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
+    const token = getAuthToken();
 
-    const res = await fetch(`http://localhost:8000/letalk/api/notes/create/`, {
+    const res = await fetch(API.NOTE_CREATE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(newNoteData),
@@ -131,12 +127,9 @@ const Notes: React.FC = () => {
     if (editingNote.id) {
       showToast('Saving your precious thoughts... 💭', 'info');
 
-      const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
+      const token = getAuthToken();
 
-      const res = await fetch(`http://localhost:8000/letalk/api/notes/${editingNote.id}/`, {
+      const res = await fetch(API.NOTE_DETAIL(editingNote.id), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -154,7 +147,9 @@ const Notes: React.FC = () => {
               : note
           )
         );
-        setSelectedNote({ ...selectedNote!, ...editingNote, updatedAt: new Date() });
+        if (selectedNote) {
+          setSelectedNote({ ...selectedNote, ...editingNote, updatedAt: new Date() });
+        }
         setIsEditing(false);
         setEditingNote({});
         showToast('Note saved successfully! Your memories are safe 💕', 'success');
@@ -167,12 +162,9 @@ const Notes: React.FC = () => {
   const handleDeleteNote = async (id: string) => {
     showToast('Removing note...', 'info');
 
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('letalk='))
-      ?.split('=')[1];
+    const token = getAuthToken();
 
-    const res = await fetch(`http://localhost:8000/letalk/api/notes/${id}/delete/`, {
+    const res = await fetch(API.NOTE_DELETE(id), {
       method: 'DELETE',
       credentials: 'include',
       headers: {
@@ -191,7 +183,12 @@ const Notes: React.FC = () => {
   };
 
   const toggleFavorite = async (id: string) => {
-    const res = await fetch(`http://localhost:8000/letalk/api/notes/${id}/favorite/`, { method: 'PATCH', credentials: 'include' });
+    const token = getAuthToken();
+    const res = await fetch(API.NOTE_FAVORITE(id), {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { Authorization: `Bearer ${token}` }
+    });
     const data = await res.json();
     if (res.ok && data.isFavorite !== undefined) {
       setNotes(prev =>
@@ -266,7 +263,7 @@ const Notes: React.FC = () => {
       {/* Sidebar - Hidden on mobile when note is selected */}
       <div className={`w-full md:w-1/3 border-r ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-pink-200 bg-white'} flex flex-col ${selectedNote ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
-        <div className={`p-4 border-b ${isDarkMode ? 'border-violet-700 bg-gray-800' : 'border-pink-200 bg-white'} fixed w-full top-0 left-0 z-40 shadow-sm`}>
+        <div className={`p-4 border-b ${isDarkMode ? 'border-violet-700 bg-gray-800' : 'border-pink-200 bg-white'} sticky top-0 z-40 shadow-sm`}>
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold">Our Notes</h1>
             <button
@@ -385,7 +382,7 @@ const Notes: React.FC = () => {
                         <Edit3 size={16} />
                       </button>
                       <button
-                        onClick={() => handleDeleteNote(selectedNote.id)}
+                        onClick={() => setShowDeleteConfirm(true)}
                         className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                       >
                         <Trash2 size={16} />
@@ -466,6 +463,30 @@ const Notes: React.FC = () => {
           }
         `}
       </style>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && selectedNote && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className={`rounded-xl p-6 max-w-sm w-full shadow-xl text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            <h3 className={`font-bold text-lg mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Delete Note?</h3>
+            <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>This note will be deleted permanently.</p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className={`px-4 py-2 border rounded-lg ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { handleDeleteNote(selectedNote.id); setShowDeleteConfirm(false); }}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

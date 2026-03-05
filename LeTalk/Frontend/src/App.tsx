@@ -46,7 +46,7 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
-      <div className="min-h-screen bg-pink-50">
+      <div className="min-h-screen bg-slate-50">
         <Routes>
           <Route path="/support" element={<Support />} />
           <Route path="/" element={
@@ -90,7 +90,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <ChatProvider>
-          <GoogleOAuthProvider clientId="1037758248458-o372odjqq94ctstj66pcrt601058hn1k.apps.googleusercontent.com">
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
             <AppContent />
           </GoogleOAuthProvider>
         </ChatProvider>

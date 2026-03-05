@@ -15,13 +15,13 @@ const Signup: React.FC = () => {
   const [showConfirmPin, setShowConfirmPin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const navigate = useNavigate();
   const { signup: authSignup } = useAuth();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     if (name === 'pin' || name === 'confirmPin') {
       // Only allow digits and limit to 4 characters
       const numericValue = value.replace(/\D/g, '').slice(0, 4);
@@ -58,7 +58,7 @@ const Signup: React.FC = () => {
     try {
       const success = await authSignup(formData.name, formData.email, formData.gender, formData.pin);
       if (success) {
-        navigate('/pairing');
+        navigate('/pairing', { state: { email: formData.email } });
       } else {
         setError('Failed to create account. Please try again.');
       }

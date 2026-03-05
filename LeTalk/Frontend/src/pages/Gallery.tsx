@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Heart, AlertCircle, CheckCircle} from 'lucide-react';
+import { Plus, X, Heart, AlertCircle, CheckCircle } from 'lucide-react';
 import { useTheme } from '../components/ThemeContext'; // Adjust the import path as needed
+import { API, getAuthToken } from '../config/api';
 
 interface GalleryItem {
   id: string;
@@ -121,7 +122,7 @@ const Gallery: React.FC = () => {
       const formData = new FormData();
       formData.append('image', selectedFile);
       formData.append('caption', caption.trim());
-      const response = await fetch('http://localhost:8000/letalk/api/upload-photo/', {
+      const response = await fetch(API.UPLOAD_PHOTO, {
         method: 'POST',
         body: formData,
         credentials: 'include'
@@ -129,12 +130,13 @@ const Gallery: React.FC = () => {
       const data = await response.json();
       if (response.ok) {
         const newItem: GalleryItem = {
-          id: Date.now().toString(),
+          id: data._id || Date.now().toString(),
           url: data.url,
           caption: caption.trim(),
-          uploadedBy: 'You',
-          uploadedAt: new Date(),
-          liked: false
+          uploadedBy: data.uploadedBy || currentUserEmail || 'You',
+          uploadedAt: new Date(data.uploadedAt || Date.now()),
+          liked: false,
+          likedBy: []
         };
         setGalleryItems(prev => [newItem, ...prev]);
         setShowUploadModal(false);
@@ -164,7 +166,7 @@ const Gallery: React.FC = () => {
   const submitEditCaption = async () => {
     if (!editModalItem || !editedCaption.trim()) return;
     try {
-      const res = await fetch("http://localhost:8000/letalk/api/edit-caption/", {
+      const res = await fetch(API.EDIT_CAPTION, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -193,7 +195,7 @@ const Gallery: React.FC = () => {
   const confirmDelete = async () => {
     if (!deleteConfirmItem) return;
     try {
-      const res = await fetch("http://localhost:8000/letalk/api/delete-photo/", {
+      const res = await fetch(API.DELETE_PHOTO, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -226,9 +228,12 @@ const Gallery: React.FC = () => {
 
   const toggleLike = async (id: string) => {
     const item = galleryItems.find(i => i.id === id);
-    if (!item || !currentUserEmail) return;
+    if (!item || !currentUserEmail) {
+      showToast('Please wait, loading your profile...', 'info');
+      return;
+    }
     try {
-      const res = await fetch('http://localhost:8000/letalk/api/toggle-like/', {
+      const res = await fetch(API.TOGGLE_LIKE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -241,12 +246,12 @@ const Gallery: React.FC = () => {
           prev.map(i =>
             i.id === id
               ? {
-                  ...i,
-                  liked: isNowLiked,
-                  likedBy: isNowLiked
-                    ? [...(i.likedBy || []), currentUserEmail]
-                    : (i.likedBy || []).filter(email => email !== currentUserEmail)
-                }
+                ...i,
+                liked: isNowLiked,
+                likedBy: isNowLiked
+                  ? [...(i.likedBy || []), currentUserEmail]
+                  : (i.likedBy || []).filter(email => email !== currentUserEmail)
+              }
               : i
           )
         );
@@ -270,24 +275,17 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const token = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('letalk='))
-          ?.split('=')[1];
+        const token = getAuthToken();
 
         const [userRes, galleryRes] = await Promise.all([
-          fetch('http://localhost:8000/letalk/api/get-user/', {
+          fetch(API.GET_USER, {
             method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`
-            },
+            headers: { Authorization: `Bearer ${token}` },
             credentials: 'include'
           }),
-          fetch('http://localhost:8000/letalk/api/gallery/', {
+          fetch(API.GALLERY, {
             method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`
-            },
+            headers: { Authorization: `Bearer ${token}` },
             credentials: 'include'
           })
         ]);
@@ -314,25 +312,6 @@ const Gallery: React.FC = () => {
       }
     };
 
-    const fetchUser = async () => {
-      const token = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('letalk='))
-          ?.split('=')[1];
-
-      const res = await fetch("http://localhost:8000/letalk/api/get-user/", {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        credentials: 'include'
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setCurrentUserEmail(data.email);
-      }
-    };
-    fetchUser();
     fetchGallery();
   }, []);
 
@@ -543,46 +522,49 @@ const Gallery: React.FC = () => {
 
       {/* Image Modal */}
       {/* Image Modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
-          onClick={() => setSelectedImage(null)}
-        >
+      {selectedImage && (() => {
+        const selectedImageFresh = galleryItems.find(i => i.id === selectedImage.id) || selectedImage;
+        return (
           <div
-            className={`max-w-4xl w-full max-h-full overflow-y-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl`}
-            onClick={e => e.stopPropagation()}
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
+            onClick={() => setSelectedImage(null)}
           >
-            <div className={`flex items-center justify-between p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-              <div className="flex items-center space-x-3">
-                <span className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedImage.uploadedBy}</span>
-                <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{formatDate(selectedImage.uploadedAt)}</span>
+            <div
+              className={`max-w-4xl w-full max-h-full overflow-y-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl`}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className={`flex items-center justify-between p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                <div className="flex items-center space-x-3">
+                  <span className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedImageFresh.uploadedBy}</span>
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{formatDate(selectedImageFresh.uploadedAt)}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button onClick={() => toggleLike(selectedImageFresh.id)} className={`p-2 rounded-full ${selectedImageFresh.liked ? 'text-violet-600' : 'text-gray-400 hover:text-violet-600'}`}>
+                    <Heart size={20} fill={selectedImageFresh.liked ? 'currentColor' : 'none'} />
+                  </button>
+                  <button onClick={() => openEditModal(selectedImageFresh)} className="p-2 text-violet-500 hover:text-violet-700">
+                    ✏️
+                  </button>
+                  <button onClick={() => openDeleteConfirm(selectedImageFresh)} className="p-2 text-red-500 hover:text-red-700">
+                    🗑
+                  </button>
+                  <button onClick={() => setSelectedImage(null)} className={`p-2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'}`}>
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <button onClick={() => toggleLike(selectedImage.id)} className={`p-2 rounded-full ${selectedImage.liked ? 'text-violet-600' : 'text-gray-400 hover:text-violet-600'}`}>
-                  <Heart size={20} fill={selectedImage.liked ? 'currentColor' : 'none'} />
-                </button>
-                <button onClick={() => openEditModal(selectedImage)} className="p-2 text-violet-500 hover:text-violet-700">
-                  ✏️
-                </button>
-                <button onClick={() => openDeleteConfirm(selectedImage)} className="p-2 text-red-500 hover:text-red-700">
-                  🗑
-                </button>
-                <button onClick={() => setSelectedImage(null)} className={`p-2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'}`}>
-                  <X size={20} />
-                </button>
+              <div className="p-4">
+                <img
+                  src={selectedImageFresh.url}
+                  alt={selectedImageFresh.caption}
+                  className="w-full h-auto max-h-96 object-contain rounded-lg"
+                />
+                <p className={`mt-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedImageFresh.caption}</p>
               </div>
-            </div>
-            <div className="p-4">
-              <img
-                src={selectedImage.url}
-                alt={selectedImage.caption}
-                className="w-full h-auto max-h-96 object-contain rounded-lg"
-              />
-              <p className={`mt-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedImage.caption}</p>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Edit Caption Modal */}
       {editModalItem && (

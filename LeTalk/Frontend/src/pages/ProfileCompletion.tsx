@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Heart, Users, ArrowRight } from 'lucide-react';
+import { API } from '../config/api';
 
 const ProfileCompletion: React.FC = () => {
   const [gender, setGender] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const userEmail = location.state?.email || '';
@@ -23,7 +24,7 @@ const ProfileCompletion: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/letalk/api/complete-google-profile/', {
+      const response = await fetch(API.COMPLETE_GOOGLE_PROFILE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -31,7 +32,7 @@ const ProfileCompletion: React.FC = () => {
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
         // Profile completed, now go to pairing
         navigate('/pairing', { state: { email: userEmail } });
@@ -64,7 +65,7 @@ const ProfileCompletion: React.FC = () => {
             <div>
               <h3 className="text-sm font-semibold text-blue-800 mb-1">Gender Information Required</h3>
               <p className="text-xs text-blue-700">
-                Letalk uses gender information for pairing compatibility. 
+                Letalk uses gender information for pairing compatibility.
                 Only male-female partnerships are supported.
               </p>
             </div>
@@ -83,12 +84,11 @@ const ProfileCompletion: React.FC = () => {
               Select Your Gender
             </label>
             <div className="space-y-3">
-              <div 
-                className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                  gender === 'male' 
-                    ? 'border-violet-600 bg-pink-50' 
+              <div
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${gender === 'male'
+                    ? 'border-violet-600 bg-pink-50'
                     : 'border-gray-200 hover:border-violet-300'
-                }`}
+                  }`}
                 onClick={() => setGender('male')}
               >
                 <div className="flex items-center space-x-3">
@@ -108,12 +108,11 @@ const ProfileCompletion: React.FC = () => {
                 </div>
               </div>
 
-              <div 
-                className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                  gender === 'female' 
-                    ? 'border-violet-600 bg-pink-50' 
+              <div
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${gender === 'female'
+                    ? 'border-violet-600 bg-pink-50'
                     : 'border-gray-200 hover:border-violet-300'
-                }`}
+                  }`}
                 onClick={() => setGender('female')}
               >
                 <div className="flex items-center space-x-3">

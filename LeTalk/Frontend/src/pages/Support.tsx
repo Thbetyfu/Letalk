@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Mail, User, MessageCircle, Loader2 } from 'lucide-react';
+import { API } from '../config/api';
 
 const Support: React.FC = () => {
     const [form, setForm] = useState({
@@ -31,7 +32,7 @@ const Support: React.FC = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/letalk/api/support/', {
+            const response = await fetch(API.SUPPORT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
