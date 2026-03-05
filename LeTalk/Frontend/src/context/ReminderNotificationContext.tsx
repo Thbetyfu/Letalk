@@ -23,7 +23,7 @@ interface ReminderNotificationContextType {
 
 const ReminderNotificationContext = createContext<ReminderNotificationContextType>({
   notification: null,
-  setNotification: () => {},
+  setNotification: () => { },
 });
 
 export const useReminderNotification = () => useContext(ReminderNotificationContext);
@@ -36,16 +36,13 @@ export const ReminderNotificationProvider: React.FC<{ children: React.ReactNode 
   useEffect(() => {
     const fetchReminders = async () => {
       try {
-        const token = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('letalk='))
-        ?.split('=')[1];
+        const token = getAuthToken();
         const res = await axios.get(API.REMINDERS, {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         const remindersWithDates = res.data.reminders.map((reminder: any) => ({
           ...reminder,
           id: reminder._id,
