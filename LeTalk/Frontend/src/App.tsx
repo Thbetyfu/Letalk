@@ -23,6 +23,7 @@ import { Bot } from 'lucide-react';
 import Support from './pages/Support';
 import NotFound from './pages/NotFound';
 import PersonalityQuiz from './pages/PersonalityQuiz';
+import MoodDashboard from './pages/MoodDashboard';
 
 // Loading component
 const LoadingScreen: React.FC = () => (
@@ -77,6 +78,7 @@ const AppContent: React.FC = () => {
             <Route path="timeline" element={<Timeline />} />
             <Route path="reminders" element={<Reminders />} />
             <Route path="extras" element={<Extras />} />
+            <Route path="mood" element={<MoodDashboard />} />
             <Route path="settings" element={<Settings />} />
           </Route>
           {/* Catch-all route for 404 */}

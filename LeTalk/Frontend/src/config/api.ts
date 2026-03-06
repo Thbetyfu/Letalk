@@ -63,6 +63,12 @@ export const API = {
     TODO_DELETE: (id: string) => `${BASE_URL}/letalk/api/extras/todo/delete/${id}/`,
     SUPPORT: `${BASE_URL}/letalk/api/support/`,
 
+    // Timeline
+    TIMELINE: `${BASE_URL}/letalk/api/timeline/`,
+    TIMELINE_CREATE: `${BASE_URL}/letalk/api/timeline/create/`,
+    TIMELINE_UPDATE: (id: string) => `${BASE_URL}/letalk/api/timeline/update/${id}/`,
+    TIMELINE_DELETE: (id: string) => `${BASE_URL}/letalk/api/timeline/delete/${id}/`,
+
     // AI Personality & Profiling
     PERSONALITY_QUIZ: `${BASE_URL}/letalk/api/ai/personality-quiz/`,
     MOOD_DASHBOARD: `${BASE_URL}/letalk/api/ai/mood-dashboard/`,

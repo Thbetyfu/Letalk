@@ -5,6 +5,7 @@ from .gallery import *
 from .notes import *    
 from .reminders import *
 from .extras import *
+from .timeline import *
 
 urlpatterns = [
     path('signup/', signup, name="signup"),
@@ -56,6 +57,12 @@ urlpatterns = [
     path('extras/', get_extras, name='get_extras'),
     path('extras/lovejar/delete/<str:note_id>/', delete_love_note, name='delete_love_note'),
     path('extras/todo/delete/<str:todo_id>/', delete_todo, name='delete_todo'),
+
+    # Timeline URLs
+    path('timeline/', get_timeline, name='get_timeline'),
+    path('timeline/create/', create_timeline_event, name='create_timeline_event'),
+    path('timeline/update/<str:event_id>/', update_timeline_event, name='update_timeline_event'),
+    path('timeline/delete/<str:event_id>/', delete_timeline_event, name='delete_timeline_event'),
 
     # === LETALK AI ENDPOINTS (BARU) ===
     path('ai/personality-quiz/', personality_quiz, name='personality_quiz'),

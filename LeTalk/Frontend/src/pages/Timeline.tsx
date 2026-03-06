@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { Plus, Calendar, MapPin, Heart, Edit3, Trash2, Save, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Calendar, MapPin, Heart, Edit3, Trash2, Save, RefreshCw, Loader2 } from 'lucide-react';
+import { useTheme } from '../components/ThemeContext';
+import { API, getAuthToken } from '../config/api';
 
 interface TimelineEvent {
   id: string;
   title: string;
   description: string;
-  date: Date;
+  date: string; // ISO string from backend
   location?: string;
   imageUrl?: string;
   createdBy: string;
@@ -13,114 +15,108 @@ interface TimelineEvent {
 }
 
 const Timeline: React.FC = () => {
+  const { isDarkMode } = useTheme();
   const [isCreating, setIsCreating] = useState(false);
   const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
+  const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [, setError] = useState<string | null>(null);
+
   const [newEvent, setNewEvent] = useState<Partial<TimelineEvent>>({
     title: '',
     description: '',
-    date: new Date(),
+    date: new Date().toISOString().split('T')[0],
     location: '',
     isSpecial: false
   });
 
-  // Mock timeline events
-  const [events, setEvents] = useState<TimelineEvent[]>([
-    {
-      id: '1',
-      title: 'First Date',
-      description: 'Our magical first date at the cozy café downtown. We talked for hours and knew there was something special between us.',
-      date: new Date('2023-02-14'),
-      location: 'Café Luna, Downtown',
-      imageUrl: 'https://images.pexels.com/photos/1024960/pexels-photo-1024960.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1',
-      createdBy: 'Jordan',
-      isSpecial: true
-    },
-    {
-      id: '2',
-      title: 'Became Official',
-      description: 'The day we decided to make it official! Best decision we ever made.',
-      date: new Date('2023-03-15'),
-      location: 'City Park',
-      createdBy: 'Alex',
-      isSpecial: true
-    },
-    {
-      id: '3',
-      title: 'First Trip Together',
-      description: 'Our amazing weekend getaway to the mountains. So many laughs and beautiful memories.',
-      date: new Date('2023-06-22'),
-      location: 'Mountain View Resort',
-      imageUrl: 'https://images.pexels.com/photos/1025000/pexels-photo-1025000.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1',
-      createdBy: 'Jordan',
-      isSpecial: false
-    },
-    {
-      id: '4',
-      title: 'Met Each Other\'s Parents',
-      description: 'The nervous but exciting day we met each other\'s families. They loved us both!',
-      date: new Date('2023-09-10'),
-      location: 'Family Dinner',
-      createdBy: 'Alex',
-      isSpecial: false
-    },
-    {
-      id: '5',
-      title: 'First Anniversary',
-      description: 'Celebrating one amazing year together. Here\'s to many more!',
-      date: new Date('2024-02-14'),
-      location: 'Sunset Beach',
-      imageUrl: 'https://images.pexels.com/photos/1007427/pexels-photo-1007427.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1',
-      createdBy: 'Jordan',
-      isSpecial: true
-    },
-    {
-      id: '6',
-      title: 'Moved In Together',
-      description: 'The big step! Our first home together. Every day feels like an adventure.',
-      date: new Date('2024-08-01'),
-      location: 'Our New Apartment',
-      createdBy: 'Alex',
-      isSpecial: true
+  const fetchTimeline = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(API.TIMELINE, {
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to load timeline');
+      const data = await response.json();
+      setEvents(data.events || []);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
-  ]);
+  };
 
-  const sortedEvents = [...events].sort((a, b) => a.date.getTime() - b.date.getTime());
+  useEffect(() => {
+    fetchTimeline();
+  }, []);
 
-  const handleCreateEvent = () => {
-    if (newEvent.title && newEvent.description) {
-      const event: TimelineEvent = {
-        id: Date.now().toString(),
-        title: newEvent.title,
-        description: newEvent.description,
-        date: newEvent.date || new Date(),
-        location: newEvent.location,
-        imageUrl: newEvent.imageUrl,
-        createdBy: 'You',
-        isSpecial: newEvent.isSpecial || false
-      };
-      setEvents(prev => [...prev, event]);
+  const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const handleCreateEvent = async () => {
+    if (!newEvent.title || !newEvent.description || !newEvent.date) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(API.TIMELINE_CREATE, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getAuthToken()}`
+        },
+        credentials: 'include',
+        body: JSON.stringify(newEvent)
+      });
+
+      if (!response.ok) throw new Error('Failed to create event');
+
+      const createdEvent = await response.json();
+      setEvents(prev => [...prev, createdEvent]);
+      setIsCreating(false);
       setNewEvent({
         title: '',
         description: '',
-        date: new Date(),
+        date: new Date().toISOString().split('T')[0],
         location: '',
         isSpecial: false
       });
-      setIsCreating(false);
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleEditEvent = (event: TimelineEvent) => {
     setEditingEvent(event);
-    setNewEvent(event);
+    setNewEvent({
+      ...event,
+      date: new Date(event.date).toISOString().split('T')[0]
+    });
   };
 
-  const handleSaveEdit = () => {
-    if (editingEvent && newEvent.title && newEvent.description) {
+  const handleSaveEdit = async () => {
+    if (!editingEvent || !newEvent.title || !newEvent.description || !newEvent.date) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(API.TIMELINE_UPDATE(editingEvent.id), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getAuthToken()}`
+        },
+        credentials: 'include',
+        body: JSON.stringify(newEvent)
+      });
+
+      if (!response.ok) throw new Error('Failed to update event');
+
       setEvents(prev =>
         prev.map(event =>
           event.id === editingEvent.id
-            ? { ...event, ...newEvent, date: newEvent.date || event.date }
+            ? { ...event, ...newEvent } as TimelineEvent
             : event
         )
       );
@@ -128,18 +124,37 @@ const Timeline: React.FC = () => {
       setNewEvent({
         title: '',
         description: '',
-        date: new Date(),
+        date: new Date().toISOString().split('T')[0],
         location: '',
         isSpecial: false
       });
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleDeleteEvent = (id: string) => {
-    setEvents(prev => prev.filter(event => event.id !== id));
+  const handleDeleteEvent = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this memory?')) return;
+
+    try {
+      const response = await fetch(API.TIMELINE_DELETE(id), {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
+        credentials: 'include'
+      });
+
+      if (!response.ok) throw new Error('Failed to delete event');
+
+      setEvents(prev => prev.filter(event => event.id !== id));
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -147,96 +162,91 @@ const Timeline: React.FC = () => {
     });
   };
 
-  const getRelativeTime = (date: Date) => {
+  const getRelativeTime = (dateStr: string) => {
+    const date = new Date(dateStr);
     const now = new Date();
     const diffInMonths = (now.getFullYear() - date.getFullYear()) * 12 + (now.getMonth() - date.getMonth());
 
-    if (diffInMonths === 0) {
-      return 'This month';
-    } else if (diffInMonths === 1) {
-      return '1 month ago';
-    } else if (diffInMonths < 12) {
-      return `${diffInMonths} months ago`;
-    } else {
-      const years = Math.floor(diffInMonths / 12);
-      return years === 1 ? '1 year ago' : `${years} years ago`;
-    }
+    if (diffInMonths === 0) return 'This month';
+    if (diffInMonths === 1) return '1 month ago';
+    if (diffInMonths < 12) return `${diffInMonths} months ago`;
+    const years = Math.floor(diffInMonths / 12);
+    return years === 1 ? '1 year ago' : `${years} years ago`;
   };
 
+  if (isLoading) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-pink-50'}`}>
+        <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-pink-50">
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-pink-50 text-gray-800'}`}>
       {/* Header */}
-      <div className="bg-white border-b border-pink-200 p-4 fixed w-full top-0 left-0 z-40 shadow-sm">
+      <div className={`border-b p-4 fixed w-full top-0 left-0 z-40 shadow-sm ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-200'}`}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-800">Our Timeline</h1>
-            <p className="text-sm text-gray-600">{events.length} precious moments</p>
+            <h1 className="text-xl font-bold">Our Timeline</h1>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{events.length} precious moments</p>
           </div>
           <button
             onClick={() => setIsCreating(true)}
-            className="p-2 bg-violet-600 text-white rounded-full hover:bg-violet-700"
+            className="p-2 bg-violet-600 text-white rounded-full hover:bg-violet-700 transition-transform active:scale-95"
           >
             <Plus size={20} />
           </button>
         </div>
       </div>
 
-      {/* Timeline */}
-      <div className="p-4 max-w-4xl mx-auto pt-24">
-        {/* Create/Edit Form */}
+      <div className="p-4 max-w-4xl mx-auto pt-24 pb-20">
+        {/* Form */}
         {(isCreating || editingEvent) && (
-          <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <div className={`rounded-xl p-6 mb-8 shadow-md border ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              {editingEvent ? <Edit3 size={18} /> : <Plus size={18} />}
               {editingEvent ? 'Edit Memory' : 'Add New Memory'}
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Title
-                </label>
+                <label className={`block text-xs font-bold uppercase tracking-wider mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Title</label>
                 <input
                   type="text"
                   value={newEvent.title || ''}
                   onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-pink-100'}`}
                   placeholder="What happened?"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
+                <label className={`block text-xs font-bold uppercase tracking-wider mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Description</label>
                 <textarea
                   value={newEvent.description || ''}
                   onChange={(e) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent h-24 resize-none"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-violet-500 h-24 resize-none outline-none ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-pink-100'}`}
                   placeholder="Tell the story..."
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date
-                  </label>
+                  <label className={`block text-xs font-bold uppercase tracking-wider mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Date</label>
                   <input
                     type="date"
-                    value={newEvent.date?.toISOString().split('T')[0] || ''}
-                    onChange={(e) => setNewEvent(prev => ({ ...prev, date: new Date(e.target.value) }))}
-                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                    value={newEvent.date || ''}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, date: e.target.value }))}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-pink-100'}`}
                   />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Location (optional)
-                  </label>
+                  <label className={`block text-xs font-bold uppercase tracking-wider mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Location</label>
                   <input
                     type="text"
                     value={newEvent.location || ''}
                     onChange={(e) => setNewEvent(prev => ({ ...prev, location: e.target.value }))}
-                    className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-pink-100'}`}
                     placeholder="Where did it happen?"
                   />
                 </div>
@@ -250,114 +260,88 @@ const Timeline: React.FC = () => {
                   onChange={(e) => setNewEvent(prev => ({ ...prev, isSpecial: e.target.checked }))}
                   className="w-4 h-4 text-violet-600 rounded focus:ring-violet-500"
                 />
-                <label htmlFor="isSpecial" className="text-sm text-gray-700">
-                  Mark as special milestone
+                <label htmlFor="isSpecial" className={`text-sm font-medium cursor-pointer ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Mark as special milestone ✨
                 </label>
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 pt-2">
                 <button
                   onClick={editingEvent ? handleSaveEdit : handleCreateEvent}
-                  className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 flex items-center space-x-2"
+                  disabled={isSubmitting}
+                  className="flex-1 px-6 py-2.5 bg-violet-600 text-white rounded-lg hover:bg-violet-700 flex items-center justify-center space-x-2 disabled:opacity-50 transition-colors"
                 >
-                  <Save size={16} />
+                  {isSubmitting ? <RefreshCw className="animate-spin" size={18} /> : (editingEvent ? <Save size={18} /> : <Plus size={18} />)}
                   <span>{editingEvent ? 'Save Changes' : 'Add Memory'}</span>
                 </button>
                 <button
                   onClick={() => {
                     setIsCreating(false);
                     setEditingEvent(null);
-                    setNewEvent({
-                      title: '',
-                      description: '',
-                      date: new Date(),
-                      location: '',
-                      isSpecial: false
-                    });
+                    setNewEvent({ title: '', description: '', date: new Date().toISOString().split('T')[0], location: '', isSpecial: false });
                   }}
-                  className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center space-x-2"
+                  className={`px-6 py-2.5 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                 >
-                  <X size={16} />
-                  <span>Cancel</span>
+                  Cancel
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Timeline Events */}
-        <div className="space-y-8">
+        {/* List */}
+        <div className="space-y-8 relative">
           {sortedEvents.map((event, index) => (
-            <div key={event.id} className="relative">
-              {/* Timeline line */}
+            <div key={event.id} className="relative group">
+              {/* Line */}
               {index < sortedEvents.length - 1 && (
-                <div className="absolute left-6 top-12 w-0.5 h-full bg-pink-200 -z-10"></div>
+                <div className="absolute left-6 top-12 w-0.5 h-full bg-pink-100 -z-10 group-hover:bg-pink-200 transition-colors"></div>
               )}
 
-              {/* Event */}
-              <div className="flex flex-col md:flex-row items-start space-x-0 md:space-x-4 space-y-4 md:space-y-0">
-                {/* Timeline dot */}
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  event.isSpecial ? 'bg-violet-600' : 'bg-violet-300'
-                }`}>
+              <div className="flex items-start space-x-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${event.isSpecial ? 'bg-gradient-to-br from-violet-600 to-pink-500' : 'bg-violet-100'
+                  }`}>
                   {event.isSpecial ? (
-                    <Heart className="w-6 h-6 text-white" fill="white" />
+                    <Heart className="w-5 h-5 text-white" fill="white" />
                   ) : (
-                    <Calendar className="w-6 h-6 text-white" />
+                    <Calendar className="w-5 h-5 text-violet-600" />
                   )}
                 </div>
 
-                {/* Event content */}
-                <div className="flex-1 bg-white rounded-xl p-6 shadow-sm w-full md:w-auto">
-                  <div className="flex flex-col md:flex-row items-start justify-between mb-4">
+                <div className={`flex-1 rounded-2xl p-6 shadow-sm border transition-shadow ${isDarkMode ? 'bg-gray-800 border-gray-700 hover:shadow-gray-900/50' : 'bg-white border-pink-50 hover:shadow-md'}`}>
+                  <div className="flex justify-between mb-2">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-1">{event.title}</h3>
-                      <div className="flex flex-wrap items-center space-x-2 text-sm text-gray-600">
+                      <h3 className="text-lg font-bold leading-tight">{event.title}</h3>
+                      <div className={`flex flex-wrap items-center gap-2 text-xs font-medium mt-1 uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`}>
                         <span>{formatDate(event.date)}</span>
                         <span>•</span>
-                        <span>{getRelativeTime(event.date)}</span>
+                        <span className="text-violet-500">{getRelativeTime(event.date)}</span>
                         {event.location && (
-                          <>
+                          <div className="flex items-center gap-1">
                             <span>•</span>
-                            <div className="flex items-center space-x-1">
-                              <MapPin size={12} />
-                              <span>{event.location}</span>
-                            </div>
-                          </>
+                            <MapPin size={10} />
+                            <span>{event.location}</span>
+                          </div>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 mt-2 md:mt-0">
-                      <button
-                        onClick={() => handleEditEvent(event)}
-                        className="p-2 text-gray-400 hover:text-violet-600 rounded-lg"
-                      >
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => handleEditEvent(event)} className="p-1.5 text-gray-400 hover:text-violet-600">
                         <Edit3 size={16} />
                       </button>
-                      <button
-                        onClick={() => handleDeleteEvent(event.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 rounded-lg"
-                      >
+                      <button onClick={() => handleDeleteEvent(event.id)} className="p-1.5 text-gray-400 hover:text-red-500">
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
 
-                  <p className="text-gray-700 mb-4">{event.description}</p>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{event.description}</p>
 
-                  {event.imageUrl && (
-                    <img
-                      src={event.imageUrl}
-                      alt={event.title}
-                      className="w-full max-w-md h-48 object-cover rounded-lg"
-                    />
-                  )}
-
-                  <div className="flex flex-col md:flex-row items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <span className="text-sm text-gray-500">Added by {event.createdBy}</span>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                    <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Added by {event.createdBy}</span>
                     {event.isSpecial && (
-                      <span className="text-xs px-2 py-1 bg-pink-100 text-violet-600 rounded-full mt-2 md:mt-0">
-                        Special Milestone
+                      <span className="text-[10px] bg-pink-50 text-pink-600 font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-tighter">
+                        MILESTONE ✨
                       </span>
                     )}
                   </div>
@@ -368,15 +352,15 @@ const Timeline: React.FC = () => {
         </div>
 
         {events.length === 0 && (
-          <div className="text-center py-12">
-            <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Calendar className="w-8 h-8 text-violet-600" />
+          <div className="text-center py-20 bg-white/50 rounded-3xl border border-dashed border-pink-200">
+            <div className="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Heart className="w-10 h-10 text-violet-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Start Your Timeline</h3>
-            <p className="text-gray-600 mb-4">Create your first memory together!</p>
+            <h3 className="text-xl font-bold text-gray-800">No memories yet</h3>
+            <p className="text-gray-500 mb-8 max-w-xs mx-auto">Start documenting your relationship journey here!</p>
             <button
               onClick={() => setIsCreating(true)}
-              className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700"
+              className="bg-violet-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-violet-700 shadow-lg shadow-violet-200"
             >
               Add First Memory
             </button>

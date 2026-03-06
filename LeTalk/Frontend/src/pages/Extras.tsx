@@ -169,8 +169,8 @@ const Extras: React.FC = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 border-b-2 font-medium transition-all duration-200 whitespace-nowrap min-w-0 flex-shrink-0 ${activeTab === tab.id
-                    ? 'border-violet-600 text-violet-600 bg-pink-50'
-                    : `border-transparent ${isDarkMode ? 'text-gray-400 hover:text-pink-400 hover:bg-gray-700' : 'text-gray-600 hover:text-violet-600 hover:bg-pink-25'}`
+                  ? 'border-violet-600 text-violet-600 bg-pink-50'
+                  : `border-transparent ${isDarkMode ? 'text-gray-400 hover:text-pink-400 hover:bg-gray-700' : 'text-gray-600 hover:text-violet-600 hover:bg-pink-25'}`
                   }`}
               >
                 <tab.icon size={18} className="sm:w-5 sm:h-5" />
@@ -231,8 +231,8 @@ const Extras: React.FC = () => {
                 <div
                   key={note.id}
                   className={`relative rounded-xl p-4 sm:p-6 shadow-sm border-2 transition-all duration-200 ${note.isRevealed
-                      ? `border-pink-200 hover:shadow-md ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
-                      : `border-pink-400 cursor-pointer hover:border-violet-500 hover:shadow-md transform hover:scale-[1.02] ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
+                    ? `border-pink-200 hover:shadow-md ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
+                    : `border-pink-400 cursor-pointer hover:border-violet-500 hover:shadow-md transform hover:scale-[1.02] ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`
                     }`}
                   onClick={() => !note.isRevealed && handleRevealNote(note.id)}
                 >
@@ -309,16 +309,16 @@ const Extras: React.FC = () => {
                   <div
                     key={item.id}
                     className={`relative flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${item.isCompleted
-                        ? 'bg-green-50 border-green-200'
-                        : `hover:border-violet-700 hover:shadow-sm ${isDarkMode ? 'bg-gray-700 border-pink-400' : 'bg-gray-50 border-gay-500'}`
+                      ? 'bg-green-50 border-green-200'
+                      : `hover:border-violet-700 hover:shadow-sm ${isDarkMode ? 'bg-gray-700 border-pink-400' : 'bg-gray-50 border-gay-500'}`
                       }`}
                   >
                     {/* Completion Checkbox */}
                     <button
                       onClick={() => handleToggleTodo(item.id)}
                       className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0 ${item.isCompleted
-                          ? 'bg-green-600 border-green-600 text-white'
-                          : `border-gray-300 hover:border-purple-600 ${isDarkMode ? 'hover:border-purple-400' : ''}`
+                        ? 'bg-green-600 border-green-600 text-white'
+                        : `border-gray-300 hover:border-purple-600 ${isDarkMode ? 'hover:border-purple-400' : ''}`
                         }`}
                     >
                       {item.isCompleted && <span className="text-xs sm:text-sm">✓</span>}
@@ -349,63 +349,83 @@ const Extras: React.FC = () => {
 
         {/* Games */}
         {activeTab === 'games' && (
-          <div className="space-y-4 sm:space-y-6">
-            <div className={`rounded-xl p-6 sm:p-8 shadow-sm text-center ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
-              <div className={`p-4 sm:p-5 rounded-full w-fit mx-auto mb-4 sm:mb-6 ${isDarkMode ? 'bg-gray-700' : 'bg-blue-100'}`}>
-                <GamePad2 className={`w-8 h-8 sm:w-10 sm:h-10 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+          <div className="space-y-6">
+            <div className={`rounded-2xl p-6 sm:p-8 shadow-sm text-center ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
+              <div className={`p-4 rounded-full w-fit mx-auto mb-4 ${isDarkMode ? 'bg-gray-700' : 'bg-blue-100'}`}>
+                <GamePad2 className={`w-8 h-8 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
               </div>
-              <h2 className={`text-lg sm:text-xl lg:text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Fun Games</h2>
-              <p className={`text-sm sm:text-base mb-6 max-w-md mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Interactive games and activities coming soon!
+              <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Mir'Ah Playground</h2>
+              <p className={`text-sm max-w-md mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Koleksi aktivitas seru untuk mempererat bonding kalian berdua. No pressure, just fun! 🎮
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <div className={`rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
-                <div className={`p-3 rounded-full w-fit mb-4 ${isDarkMode ? 'bg-gray-700' : 'bg-yellow-100'}`}>
-                  <Star className={`w-6 h-6 ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`} />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className={`group rounded-2xl p-6 shadow-sm border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
+                <div className={`p-3 rounded-xl w-fit mb-4 ${isDarkMode ? 'bg-indigo-900/50' : 'bg-indigo-50'}`}>
+                  <Coffee className="w-6 h-6 text-indigo-500" />
                 </div>
-                <h3 className={`font-semibold mb-2 text-sm sm:text-base ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Question Game</h3>
-                <p className={`text-xs sm:text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Daily questions to get to know each other better
+                <h3 className="text-lg font-bold mb-2">Deep Talk Questions</h3>
+                <p className={`text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  50+ pertanyaan bermakna untuk mengenal sisi terdalam pasanganmu. Cocok untuk 'pillow talk'.
                 </p>
-                <button className={`w-full px-4 py-3 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700 transition-all duration-200 text-sm font-medium min-h-[44px] ${isDarkMode ? 'hover:bg-yellow-700' : ''}`}>
-                  Coming Soon
+                <div className="flex items-center gap-2 text-xs font-bold text-indigo-500 uppercase tracking-wider mb-4">
+                  <span className="px-2 py-1 rounded bg-indigo-500/10">Emotional</span>
+                  <span className="px-2 py-1 rounded bg-indigo-500/10">Bonding</span>
+                </div>
+                <button className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">
+                  Mulai Deep Talk 💬
                 </button>
               </div>
-              <div className={`rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
-                <div className={`p-3 rounded-full w-fit mb-4 ${isDarkMode ? 'bg-gray-700' : 'bg-green-100'}`}>
-                  <Coffee className={`w-6 h-6 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} />
+
+              <div className={`group rounded-2xl p-6 shadow-sm border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
+                <div className={`p-3 rounded-xl w-fit mb-4 ${isDarkMode ? 'bg-orange-900/50' : 'bg-orange-50'}`}>
+                  <Star className="w-6 h-6 text-orange-500" />
                 </div>
-                <h3 className={`font-semibold mb-2 text-sm sm:text-base ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Date Ideas</h3>
-                <p className={`text-xs sm:text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Random date idea generator for when you're stuck
+                <h3 className="text-lg font-bold mb-2">Would You Rather?</h3>
+                <p className={`text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Pilih satu dari dua situasi sulit dan lihat apakah pilihan kalian sama atau justru bertolak belakang!
                 </p>
-                <button className={`w-full px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-200 text-sm font-medium min-h-[44px] ${isDarkMode ? 'hover:bg-green-700' : ''}`}>
-                  Coming Soon
+                <div className="flex items-center gap-2 text-xs font-bold text-orange-500 uppercase tracking-wider mb-4">
+                  <span className="px-2 py-1 rounded bg-orange-500/10">Funny</span>
+                  <span className="px-2 py-1 rounded bg-orange-500/10">Interactive</span>
+                </div>
+                <button className="w-full py-3 bg-orange-600 text-white rounded-xl font-bold hover:bg-orange-700 transition-all">
+                  Mainkan Sekarang 🎭
                 </button>
               </div>
-              <div className={`rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
-                <div className={`p-3 rounded-full w-fit mb-4 ${isDarkMode ? 'bg-gray-700' : 'bg-purple-100'}`}>
-                  <Heart className={`w-6 h-6 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+
+              <div className={`group rounded-2xl p-6 shadow-sm border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
+                <div className={`p-3 rounded-xl w-fit mb-4 ${isDarkMode ? 'bg-emerald-900/50' : 'bg-emerald-50'}`}>
+                  <Gift className="w-6 h-6 text-emerald-500" />
                 </div>
-                <h3 className={`font-semibold mb-2 text-sm sm:text-base ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Love Quiz</h3>
-                <p className={`text-xs sm:text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Test how well you know each other
+                <h3 className="text-lg font-bold mb-2">Daily Couple Mission</h3>
+                <p className={`text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Misi kecil harian seperti "Puji pasanganmu 3x hari ini" atau "Kirimkan lagu favoritmu".
                 </p>
-                <button className={`w-full px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all duration-200 text-sm font-medium min-h-[44px] ${isDarkMode ? 'hover:bg-purple-700' : ''}`}>
-                  Coming Soon
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-wider mb-4">
+                  <span className="px-2 py-1 rounded bg-emerald-500/10">Activity</span>
+                  <span className="px-2 py-1 rounded bg-emerald-500/10">Romantic</span>
+                </div>
+                <button className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all">
+                  Ambil Misi Hari Ini 🚀
                 </button>
               </div>
-              <div className={`rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
-                <div className={`p-3 rounded-full w-fit mb-4 ${isDarkMode ? 'bg-gray-700' : 'bg-red-100'}`}>
-                  <Gift className={`w-6 h-6 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
+
+              <div className={`group rounded-2xl p-6 shadow-sm border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-pink-100'}`}>
+                <div className={`p-3 rounded-xl w-fit mb-4 ${isDarkMode ? 'bg-rose-900/50' : 'bg-rose-50'}`}>
+                  <Heart className="w-6 h-6 text-rose-500" />
                 </div>
-                <h3 className={`font-semibold mb-2 text-sm sm:text-base ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Surprise Me</h3>
-                <p className={`text-xs sm:text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Random sweet gestures and surprises
+                <h3 className="text-lg font-bold mb-2">Truth or Dare</h3>
+                <p className={`text-sm mb-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Klasik yang tak pernah gagal. Jujur sepenuhnya atau lakukan tantangan romantis yang mendebarkan!
                 </p>
-                <button className={`w-full px-4 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 text-sm font-medium min-h-[44px] ${isDarkMode ? 'hover:bg-red-700' : ''}`}>
-                  Coming Soon
+                <div className="flex items-center gap-2 text-xs font-bold text-rose-500 uppercase tracking-wider mb-4">
+                  <span className="px-2 py-1 rounded bg-rose-500/10">Classic</span>
+                  <span className="px-2 py-1 rounded bg-rose-500/10">Spicy</span>
+                </div>
+                <button className="w-full py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all">
+                  Tantang Pasanganmu 🕯️
                 </button>
               </div>
             </div>

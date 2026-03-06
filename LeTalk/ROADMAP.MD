@@ -57,12 +57,12 @@ URUTAN WAJIB (jangan diacak):
 - [x] 2D-1  Tambahkan dev proxy di vite.config.ts (SELESAI — /letalk → :8000, /ws → :8000 WS)
 
 ### FINAL — Test End-to-End
-- [ ] Signup baru → redirect ke /pairing
-- [ ] Login PIN → masuk dashboard
-- [ ] Login Google → masuk dashboard
-- [ ] Logout → redirect ke /login, token terhapus
-- [ ] Forgot PIN → email terkirim → PIN baru bisa login
-- [ ] Refresh halaman → tetap login (token persist)
+- [x] Signup baru → redirect ke /pairing ✅ (Browser test PASS)
+- [x] Login PIN → masuk dashboard ✅ (API + Browser test PASS)
+- [ ] Login Google → masuk dashboard (belum test — perlu GOOGLE_CLIENT_ID production)
+- [x] Logout → redirect ke /login, token terhapus ✅ (API + Browser test PASS)
+- [ ] Forgot PIN → email terkirim → PIN baru bisa login (SMTP belum dikonfigurasi)
+- [x] Refresh halaman → tetap login (token persist) ✅ (Browser test PASS)
 
 ## Phase 3 — Core Chat 💬
 Inti dari aplikasi — harus jalan dulu sebelum AI diintegrasikan
@@ -91,41 +91,49 @@ Ini yang membedakan Letalk dari chat app biasa
       └── Selama cooldown → tampilkan pesan refleksi personal dari Gemini
       └── Contoh: "Kamu tadi agak kasar, coba renungkan..."
 
+### SUB-PHASE 4 — Frontend Refactoring & Bug Fixes
+- [x] 4A Gallery.tsx: API.*, hapus fetchUser duplikat, fix uploadedBy, fix liked state, tambah toast
+- [x] 4B Notes.tsx: API.*, fix header sticky, fix toggleFavorite token, fix handleSaveNote, delete confirm modal
+- [x] 4C Reminders.tsx: API.*, local state update (no refetch), browser notification, timezone fix
+- [x] 4D Extras.tsx: Hapus location.reload() → state update, API.*, error handling, empty state LoveJar
+- [x] 4E Settings.tsx: API.*, handleSaveProfile toast, handleChangePin error read, camera coming soon, hapus unused hearts state
+
 ## Phase 5 — Personality Quiz & AI Profiling 🧠
 Dikerjakan setelah chat + AI sudah berjalan
 
-- [ ] Verifikasi endpoint backend ai/personality-quiz/ berjalan
-- [ ] Buat halaman PersonalityQuiz.tsx
-      └── 10-15 pertanyaan tentang cara menangani konflik
-      └── Pertanyaan tentang cara mengekspresikan kasih sayang
-- [ ] Hubungkan hasil kuis ke backend
-- [ ] Gemini Profiling
-      └── AI mengenal kepribadian User A & User B sebelum mulai chat
-- [ ] Tambahkan route /personality-quiz di App.tsx
-- [ ] Integrasikan quiz ke alur onboarding (setelah pairing)
+- [x] Verifikasi endpoint backend ai/personality-quiz/ berjalan ✅
+- [x] Buat halaman PersonalityQuiz.tsx ✅
+      └── 12 pertanyaan: Conflict Handling, Love Language, Communication, Sensitivity, Patience, Values, Coping, Self Awareness
+      └── Multi-step UI dengan progress bar + step indicator
+- [x] Hubungkan hasil kuis ke backend ✅ (POST /ai/personality-quiz/ → Gemini → profil tersimpan di MongoDB)
+- [x] Gemini Profiling ✅
+      └── AI mengenal kepribadian user dari jawaban quiz
+      └── Menghasilkan: personality_type, love_language, conflict_handling, communication_style, meter empathy/patience/sensitivity
+- [x] Tambahkan route /personality-quiz di App.tsx ✅
+- [x] Integrasikan quiz ke alur onboarding (setelah pairing → quiz → chat) ✅
+- [x] Tampilkan Personality Profile di Settings.tsx + tombol Retake Quiz ✅
+- [x] Tambahkan API.PERSONALITY_QUIZ, API.MOOD_DASHBOARD, API.ANALYZE_CONVERSATION di api.ts ✅
 
 ## Phase 6 — Frontend Pages Lengkap 🎨
 Semua halaman dashboard dilengkapi kontennya
 
-- [ ] Dashboard layout (DashboardLayout.tsx)
-- [ ] Halaman Pairing (UI + koneksi ke backend)
-- [ ] Gallery — foto/kenangan bersama
-- [ ] Notes — catatan bersama
-- [ ] Timeline — milestone hubungan
-- [ ] Reminders — pengingat penting
-- [ ] Settings & Profile
-- [ ] Extras
+- [x] Dashboard layout (DashboardLayout.tsx) ✅
+- [x] Halaman Pairing (UI + koneksi ke backend) ✅
+- [x] Gallery — foto/kenangan bersama ✅
+- [x] Notes — catatan bersama ✅
+- [x] Timeline — milestone hubungan ✅ (Backend + CRUD persisten)
+- [x] Reminders — pengingat penting ✅
+- [x] Settings & Profile ✅
+- [x] Extras ✅
 
 ## Phase 7 — Mood Dashboard 📊
 Dikerjakan SETELAH ada data historis dari Phase 4
 
-- [ ] Emotion Graph
-      └── Visualisasi dominasi emosi dalam seminggu terakhir
-      └── Apakah lebih banyak joy atau annoyance?
-- [ ] Relationship Health Score (angka 1–100)
-      └── Dihitung dari analisis AI Mediator
-- [ ] Backend endpoint untuk agregasi data emosi historis
-- [ ] Integrasi chart library (Recharts / Chart.js)
+- [x] Emotion Graph ✅ (Visualisasi Bar chart distribusi emosi terbaru)
+- [x] Relationship Health Score ✅ (Angka 10-100 dihitung dari harmoni percakapan)
+- [x] Backend endpoint untuk mood & analisis percakapan ✅
+- [x] Integrasi chart library (Recharts) ✅
+- [x] AI Insights (Kabar Baik, Isu Potensial, Tip Personal) ✅
 
 ## Phase 8 — Dockerization & Deploy 🚀
 Dikerjakan terakhir setelah semua service bisa jalan lokal
@@ -145,10 +153,10 @@ Dikerjakan terakhir setelah semua service bisa jalan lokal
 ## 📅 Ringkasan Urutan Pengerjaan
 1. Phase 0 → Rebranding & UI Persona ✅ SELESAI
 2. Phase 1 → Backend + Auth Foundation ✅ SELESAI
-3. Phase 2 → Frontend API Refactor ✅ SELESAI (tinggal Final Test)
-4. Phase 3 → Core Chat (WebSocket jalan) ← NEXT
-5. Phase 4 → AI Integration (INTI Letalk)
-6. Phase 5 → Personality Quiz & Gemini Profiling
-7. Phase 6 → Frontend Pages Lengkap
-8. Phase 7 → Mood Dashboard (butuh data dulu)
-9. Phase 8 → Docker + Deploy
+3. Phase 2 → Frontend API Refactor ✅ SELESAI (E2E test PASS — Google login & Forgot PIN belum karena config)
+4. Phase 3 → Core Chat (WebSocket jalan) ✅ SELESAI
+5. Phase 4 → AI Integration (INTI Letalk) ✅ SELESAI + Frontend Refactoring ✅ SELESAI
+6. Phase 5 → Personality Quiz & Gemini Profiling ✅ SELESAI
+7. Phase 6 → Frontend Pages Lengkap ✅ SELESAI
+8. Phase 7 → Mood Dashboard ✅ SELESAI
+9. Phase 8 → Docker + Deploy ← NEXT

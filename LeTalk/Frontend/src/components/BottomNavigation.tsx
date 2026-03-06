@@ -4,10 +4,10 @@ import { useTheme } from '../components/ThemeContext'; // Adjust the import path
 import {
   MessageCircle,
   Images,
-  FileText,
   Clock,
   Bell,
   Heart,
+  TrendingUp,
   Settings
 } from 'lucide-react';
 
@@ -39,30 +39,29 @@ const BottomNavigation: React.FC = () => {
   const navItems = [
     { to: '/dashboard/chat', icon: MessageCircle, label: 'Chat' },
     { to: '/dashboard/gallery', icon: Images, label: 'Gallery' },
-    { to: '/dashboard/notes', icon: FileText, label: 'Notes' },
+    { to: '/dashboard/timeline', icon: Clock, label: 'Timeline' },
     { to: '/dashboard/reminders', icon: Bell, label: 'Reminders' },
     { to: '/dashboard/extras', icon: Heart, label: 'Extras' },
+    { to: '/dashboard/mood', icon: TrendingUp, label: 'Mood' },
     { to: '/dashboard/settings', icon: Settings, label: 'Settings' }
   ];
 
   return (
-    <nav className={`fixed z-40 bottom-4 left-1/2 transform -translate-x-1/2 rounded-full w-full max-w-md sm:max-w-lg md:max-w-xl shadow-md backdrop-blur-sm ${
-      isDarkMode
-        ? 'bg-violet-300 border-t border-violet-700'
-        : 'bg-pink-200/50 border-t border-pink-200'
-    }`}>
+    <nav className={`fixed z-40 bottom-4 left-1/2 transform -translate-x-1/2 rounded-full w-full max-w-md sm:max-w-lg md:max-w-xl shadow-md backdrop-blur-sm ${isDarkMode
+      ? 'bg-violet-300 border-t border-violet-700'
+      : 'bg-pink-200/50 border-t border-pink-200'
+      }`}>
       <div className="flex justify-around items-center px-2">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex flex-col items-center py-2 rounded-lg transition-colors relative ${
-                isActive
-                  ? 'text-violet-500'
-                  : isDarkMode
-                    ? 'text-pink-900 hover:text-violet-500'
-                    : 'text-gray-600 hover:text-violet-600'
+              `flex flex-col items-center py-2 rounded-lg transition-colors relative ${isActive
+                ? 'text-violet-500'
+                : isDarkMode
+                  ? 'text-pink-900 hover:text-violet-500'
+                  : 'text-gray-600 hover:text-violet-600'
               }`
             }
           >
