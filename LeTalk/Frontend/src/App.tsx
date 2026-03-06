@@ -22,6 +22,7 @@ import ForgotPin from './pages/ForgotPin';
 import { Bot } from 'lucide-react';
 import Support from './pages/Support';
 import NotFound from './pages/NotFound';
+import PersonalityQuiz from './pages/PersonalityQuiz';
 
 // Loading component
 const LoadingScreen: React.FC = () => (
@@ -63,6 +64,7 @@ const AppContent: React.FC = () => {
           } />
           <Route path="/profile-completion" element={<ProfileCompletion />} />
           <Route path="/forgot-pin" element={<ForgotPin />} />
+          <Route path="/personality-quiz" element={<PersonalityQuiz />} />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardLayout />

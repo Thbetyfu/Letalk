@@ -11,7 +11,7 @@ const Pairing: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [mode, setMode] = useState<'select' | 'generate' | 'enter'>('select');
   const [userEmail, setUserEmail] = useState('');
-  
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,7 +24,7 @@ const Pairing: React.FC = () => {
         const email = parsedData.email || '';
         setUserEmail(email);
         console.log('User Email:', email);
-        
+
         if (!email) {
           navigate('/login');
         }
@@ -43,12 +43,12 @@ const Pairing: React.FC = () => {
       }
     }
   }, [location.state, navigate]);
-  
+
 
   const generatePairCode = async () => {
     setIsLoading(true);
     setError('');
-    
+
     try {
       const response = await fetch(API.PAIR_PARTNER, {
         method: 'POST',
@@ -58,7 +58,7 @@ const Pairing: React.FC = () => {
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
         setGeneratedCode(data.partnerCode);
         setSuccess('Pair code generated! Share this with your partner.');
@@ -80,24 +80,24 @@ const Pairing: React.FC = () => {
 
     setIsLoading(true);
     setError('');
-    
+
     try {
       const response = await fetch(API.PAIR_PARTNER, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: userEmail,
           partnerCode: pairCode.toUpperCase()
         })
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
-        setSuccess('Successfully paired! You can now login.');
+        setSuccess('Successfully paired! Redirecting to personality quiz...');
         setTimeout(() => {
-          navigate('/login');
+          navigate('/personality-quiz');
         }, 2000);
       } else {
         setError(data.error || 'Failed to pair with the code');
@@ -139,7 +139,7 @@ const Pairing: React.FC = () => {
             <div>
               <h3 className="text-sm font-semibold text-blue-800 mb-1">Pairing Requirements</h3>
               <p className="text-xs text-blue-700">
-                Letalk only supports traditional male-female partnerships. 
+                Letalk only supports traditional male-female partnerships.
                 Same-gender pairing is not available.
               </p>
             </div>
@@ -163,7 +163,7 @@ const Pairing: React.FC = () => {
             <p className="text-center text-gray-600 mb-6">
               Choose how you want to connect with your partner:
             </p>
-            
+
             <button
               onClick={() => setMode('generate')}
               className="w-full p-4 border-2 border-pink-200 rounded-lg hover:border-violet-600 hover:bg-pink-50 transition-colors flex items-center space-x-3"

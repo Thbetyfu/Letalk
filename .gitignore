@@ -1,1 +1,5 @@
 referensi/
+mongo-data/
+__pycache__/
+LeTalk/__pycache__/
+LeTalk/Backend/out*.log

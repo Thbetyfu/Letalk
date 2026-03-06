@@ -482,6 +482,49 @@ const Settings: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Personality Profile Section */}
+        {(user as any)?.personalityProfile && (
+          <div className={`rounded-xl p-6 shadow-sm mb-6 border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-violet-500' : 'bg-white'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Personality Profile</h2>
+              <button
+                onClick={() => navigate('/personality-quiz')}
+                className="text-sm text-violet-600 hover:text-violet-700 font-medium"
+              >
+                Retake Quiz →
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className={`rounded-lg p-4 text-center ${isDarkMode ? 'bg-gray-800' : 'bg-violet-50'}`}>
+                <p className="text-xs text-gray-500 mb-1">Personality Type</p>
+                <p className="font-bold text-violet-600">{(user as any).personalityProfile.personality_type}</p>
+              </div>
+              <div className={`rounded-lg p-4 text-center ${isDarkMode ? 'bg-gray-800' : 'bg-pink-50'}`}>
+                <p className="text-xs text-gray-500 mb-1">Love Language</p>
+                <p className="font-bold text-pink-600 capitalize">{(user as any).personalityProfile.love_language?.replace(/_/g, ' ')}</p>
+              </div>
+              <div className={`rounded-lg p-4 text-center ${isDarkMode ? 'bg-gray-800' : 'bg-indigo-50'}`}>
+                <p className="text-xs text-gray-500 mb-1">Conflict Style</p>
+                <p className="font-bold text-indigo-600 capitalize">{(user as any).personalityProfile.conflict_handling}</p>
+              </div>
+            </div>
+          </div>
+        )}
+        {!(user as any)?.personalityProfile && (
+          <div className={`rounded-xl p-6 shadow-sm mb-6 border transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-pink-900 shadow-lg shadow-violet-500' : 'bg-white'}`}>
+            <div className="text-center py-4">
+              <p className="text-gray-500 mb-3">Kamu belum mengisi Personality Quiz</p>
+              <button
+                onClick={() => navigate('/personality-quiz')}
+                className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-medium transition-colors"
+              >
+                Ambil Quiz Sekarang 🧠
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Settings Sections */}
         <div className="space-y-6">
           {settingSections.map((section, index) => (

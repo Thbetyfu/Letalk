@@ -63,6 +63,11 @@ export const API = {
     TODO_DELETE: (id: string) => `${BASE_URL}/letalk/api/extras/todo/delete/${id}/`,
     SUPPORT: `${BASE_URL}/letalk/api/support/`,
 
+    // AI Personality & Profiling
+    PERSONALITY_QUIZ: `${BASE_URL}/letalk/api/ai/personality-quiz/`,
+    MOOD_DASHBOARD: `${BASE_URL}/letalk/api/ai/mood-dashboard/`,
+    ANALYZE_CONVERSATION: `${BASE_URL}/letalk/api/ai/analyze-conversation/`,
+
     // WebSocket
     CHAT_WS: (pairCode: string) => {
         const token = getAuthToken();
