@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Image, Mic, Smile, CheckCircle, AlertCircle, Heart, X, Bell, Bot } from 'lucide-react';
+import { Send, Image, Mic, CheckCircle, AlertCircle, Heart, X, Bell, Bot } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../components/ThemeContext'; // Adjust the import path as needed
-import { API, getAuthToken } from '../config/api';
+import { API } from '../config/api';
 
 interface ToastMessage {
   id: string;
@@ -63,6 +63,10 @@ const Chat: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
@@ -73,12 +77,9 @@ const Chat: React.FC = () => {
   const reconnectAttempts = useRef(0);
   const MAX_RECONNECT_ATTEMPTS = 5;
 
-  const [aiEmotion, setAiEmotion] = useState<{ sender: string; emotion: string; is_toxic: boolean } | null>(null);
   const [conflictCooldown, setConflictCooldown] = useState<{ active: boolean; remaining: number; expiresAt: string } | null>(null);
   const [aiReflection, setAiReflection] = useState<string | null>(null);
   const [systemMsg, setSystemMsg] = useState<string | null>(null);
-
-  const [isWindowVisible, setIsWindowVisible] = useState(!document.hidden);
   const [partnerOnline, setPartnerOnline] = useState(false);
 
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -109,7 +110,6 @@ const Chat: React.FC = () => {
     const handleVisibilityChange = () => {
       const isVisible = !document.hidden;
       console.log('Visibility changed, isVisible:', isVisible);
-      setIsWindowVisible(isVisible);
       if (
         isVisible &&
         socketRef.current &&
@@ -180,11 +180,7 @@ const Chat: React.FC = () => {
             break;
 
           case 'ai_update':
-            setAiEmotion({
-              sender: data.sender,
-              emotion: data.emotion,
-              is_toxic: data.is_toxic,
-            });
+            // Logic for ai_update could be added here if needed to show emotion live
             break;
 
           case 'conflict_detected':
@@ -306,6 +302,73 @@ const Chat: React.FC = () => {
       const imageUrl = URL.createObjectURL(file);
       sendMessageToBackend('', 'image', imageUrl);
     }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result as string;
+          sendAudioMessage(base64Audio);
+        };
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      showToast("Cannot access microphone. Please check permissions.", "error");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  };
+
+  const sendAudioMessage = (base64Audio: string) => {
+    if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
+      showToast('Connection lost. Please try again.', 'error');
+      return;
+    }
+
+    const payload = {
+      message: base64Audio,
+      senderName: user?.name || 'User',
+      senderEmail: user?.email || '',
+      type: 'audio'
+    };
+
+    socketRef.current.send(JSON.stringify(payload));
+    showToast('Voice message sent! 🎤💕', 'success');
+  };
+
+  const formatRecordingTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const formatTime = (date: Date) => {
@@ -455,11 +518,29 @@ const Chat: React.FC = () => {
               {msg.type === 'image' ? (
                 <div className="space-y-2">
                   <img
-                    src={msg.imageUrl}
+                    src={msg.imageUrl || msg.content}
                     alt="Shared image"
                     className="rounded-lg max-w-full h-auto"
                   />
                   <div className="flex justify-between items-center">
+                    <p className="text-xs opacity-75">{formatTime(msg.timestamp)}</p>
+                    {msg.senderEmail === user?.email && (
+                      <span className={`text-xs ${msg.seen ? 'text-blue-500' : 'text-gray-500'}`}>
+                        {msg.seen ? '✓✓' : '✓'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : msg.type === 'audio' ? (
+                <div className="space-y-2 min-w-[200px]">
+                  <div className="flex items-center gap-2">
+                    <Mic size={16} />
+                    <audio controls className="h-8 w-full max-w-[150px]">
+                      <source src={msg.content} type="audio/webm" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                  <div className="flex justify-between items-center mt-1">
                     <p className="text-xs opacity-75">{formatTime(msg.timestamp)}</p>
                     {msg.senderEmail === user?.email && (
                       <span className={`text-xs ${msg.seen ? 'text-blue-500' : 'text-gray-500'}`}>
@@ -496,7 +577,35 @@ const Chat: React.FC = () => {
 
       {/* Message Input */}
       <div className={` p-4 fixed bottom-14 w-full mb-6 ${isDarkMode ? 'bg-gray-800 border border-violet-600 rounded-xl' : 'bg-white border-t border-pink-200 '}`}>
+        {isRecording && (
+          <div className="mb-2 flex items-center justify-between px-4 py-2 bg-red-50 rounded-full border border-red-200 animate-pulse">
+            <div className="flex items-center gap-2 text-red-600 font-medium">
+              <span className="w-2 h-2 bg-red-600 rounded-full animate-ping" />
+              <span>Recording... {formatRecordingTime(recordingTime)}</span>
+            </div>
+            <button
+              onClick={stopRecording}
+              className="text-red-600 font-bold hover:text-red-700"
+            >
+              Cancel/Stop
+            </button>
+          </div>
+        )}
         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
+          <label className={`p-2 rounded-full cursor-pointer hover:bg-pink-100 transition-colors ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <Image size={24} />
+            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+          </label>
+
+          <button
+            type="button"
+            onClick={isRecording ? stopRecording : startRecording}
+            className={`p-2 rounded-full transition-colors ${isRecording ? 'bg-red-500 text-white animate-pulse' : isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:bg-pink-100'}`}
+            disabled={conflictCooldown?.active || isLoading}
+          >
+            <Mic size={24} />
+          </button>
+
           <div className="flex-1 relative">
             <input
               type="text"
@@ -505,16 +614,18 @@ const Chat: React.FC = () => {
               placeholder={
                 conflictCooldown?.active
                   ? "⏳ Chat dikunci oleh AI Mediator..."
-                  : "Tulis pesan..."
+                  : isRecording
+                    ? "Recording audio..."
+                    : "Tulis pesan..."
               }
-              disabled={conflictCooldown?.active || isLoading}
-              className={`w-full px-4 py-2 pr-12 rounded-full border border-pink-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'} transition-colors ${conflictCooldown?.active ? 'bg-gray-200 cursor-not-allowed opacity-60' : ''}`}
+              disabled={conflictCooldown?.active || isLoading || isRecording}
+              className={`w-full px-4 py-2 pr-12 rounded-full border border-pink-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'} transition-colors ${conflictCooldown?.active || isRecording ? 'bg-gray-200 cursor-not-allowed opacity-60' : ''}`}
             />
           </div>
 
           <button
             type="submit"
-            disabled={!message.trim() || isLoading || !!conflictCooldown?.active}
+            disabled={!message.trim() || isLoading || !!conflictCooldown?.active || isRecording}
             className="p-2 bg-violet-600 text-white rounded-full hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Send size={20} />

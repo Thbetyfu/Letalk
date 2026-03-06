@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Calendar, MapPin, Heart, Edit3, Trash2, Save, RefreshCw, Loader2 } from 'lucide-react';
 import { useTheme } from '../components/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { API, getAuthToken } from '../config/api';
 
 interface TimelineEvent {
@@ -16,6 +17,7 @@ interface TimelineEvent {
 
 const Timeline: React.FC = () => {
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
   const [events, setEvents] = useState<TimelineEvent[]>([]);
@@ -338,7 +340,9 @@ const Timeline: React.FC = () => {
                   <p className="text-gray-600 text-sm leading-relaxed mb-4">{event.description}</p>
 
                   <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                    <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Added by {event.createdBy}</span>
+                    <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">
+                      Added by {event.createdBy === user?.name ? 'You' : event.createdBy}
+                    </span>
                     {event.isSpecial && (
                       <span className="text-[10px] bg-pink-50 text-pink-600 font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-tighter">
                         MILESTONE ✨

@@ -28,6 +28,75 @@ const Extras: React.FC = () => {
   const [loveNotes, setLoveNotes] = useState<LoveNote[]>([]);
   const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
 
+  // Mini Games State
+  const [gameModal, setGameModal] = useState<{ isOpen: boolean; title: string; questions: string[]; currentIndex: number }>({
+    isOpen: false,
+    title: '',
+    questions: [],
+    currentIndex: 0
+  });
+
+  const GAMES_CONTENT = {
+    deepTalk: [
+      "Apa hal pertama yang membuatmu jatuh cinta padaku?",
+      "Jika kita punya waktu 24 jam terakhir di dunia, apa yang ingin kamu lakukan bersamaku?",
+      "Apa ketakutan terbesarmu dalam hubungan kita?",
+      "Bagaimana caraku paling bisa membuatmu merasa dihargai?",
+      "Apa kenangan masa kecil yang paling membentuk dirimu sekarang?",
+      "Apa satu hal yang ingin kamu ubah dari dirimu sendiri?"
+    ],
+    wouldYouRather: [
+      "Lebih baik liburan ke kutub yang dingin atau gurun yang panas bersama pasangan?",
+      "Lebih baik punya pasangan yang jago masak tapi cuek, atau jago romantis tapi masakannya zonk?",
+      "Lebih baik tinggal di apartemen mewah di kota atau rumah kayu sederhana di pinggir danau?",
+      "Lebih baik bisa baca pikiran pasangan atau bisa liat masa depan berdua?",
+      "Lebih baik kencan nonton film di bioskop atau masak bareng di rumah?",
+    ],
+    truth: [
+      "Apa kebiasaan burukku yang sebenarnya paling membuatmu jengkel?",
+      "Pernahkah kamu pura-pura suka dengan hadiah yang kuberikan?",
+      "Apa hal pertama yang kamu ceritakan ke sahabatmu saat kita pertama kali berkencan?",
+      "Kalau kamu bisa tukar nasib denganku seharian, apa hal pertama yang akan kamu lakukan?",
+    ],
+    dare: [
+      "Kirimkan pesan suara 'I love you' paling imut sekarang juga!",
+      "Lakukan tarian konyol selama 30 detik di depanku (atau kirim videonya)!",
+      "Puji aku 5 kali dengan alasan yang berbeda-beda!",
+      "Tunjukkan foto paling memalukan di galeri ponselmu!",
+    ]
+  };
+
+  const openGame = (type: keyof typeof GAMES_CONTENT | 'truth-or-dare') => {
+    let title = '';
+    let questions: string[] = [];
+
+    if (type === 'deepTalk') {
+      title = 'Deep Talk Questions';
+      questions = [...GAMES_CONTENT.deepTalk].sort(() => Math.random() - 0.5);
+    } else if (type === 'wouldYouRather') {
+      title = 'Would You Rather?';
+      questions = [...GAMES_CONTENT.wouldYouRather].sort(() => Math.random() - 0.5);
+    } else if (type === 'truth-or-dare') {
+      title = 'Truth or Dare?';
+      const combined = [...GAMES_CONTENT.truth, ...GAMES_CONTENT.dare].sort(() => Math.random() - 0.5);
+      questions = combined;
+    }
+
+    setGameModal({
+      isOpen: true,
+      title,
+      questions,
+      currentIndex: 0
+    });
+  };
+
+  const nextQuestion = () => {
+    setGameModal(prev => ({
+      ...prev,
+      currentIndex: (prev.currentIndex + 1) % prev.questions.length
+    }));
+  };
+
   useEffect(() => {
     fetch(API.EXTRAS, {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
@@ -373,7 +442,10 @@ const Extras: React.FC = () => {
                   <span className="px-2 py-1 rounded bg-indigo-500/10">Emotional</span>
                   <span className="px-2 py-1 rounded bg-indigo-500/10">Bonding</span>
                 </div>
-                <button className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">
+                <button
+                  onClick={() => openGame('deepTalk')}
+                  className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all"
+                >
                   Mulai Deep Talk 💬
                 </button>
               </div>
@@ -390,7 +462,10 @@ const Extras: React.FC = () => {
                   <span className="px-2 py-1 rounded bg-orange-500/10">Funny</span>
                   <span className="px-2 py-1 rounded bg-orange-500/10">Interactive</span>
                 </div>
-                <button className="w-full py-3 bg-orange-600 text-white rounded-xl font-bold hover:bg-orange-700 transition-all">
+                <button
+                  onClick={() => openGame('wouldYouRather')}
+                  className="w-full py-3 bg-orange-600 text-white rounded-xl font-bold hover:bg-orange-700 transition-all"
+                >
                   Mainkan Sekarang 🎭
                 </button>
               </div>
@@ -424,7 +499,10 @@ const Extras: React.FC = () => {
                   <span className="px-2 py-1 rounded bg-rose-500/10">Classic</span>
                   <span className="px-2 py-1 rounded bg-rose-500/10">Spicy</span>
                 </div>
-                <button className="w-full py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all">
+                <button
+                  onClick={() => openGame('truth-or-dare')}
+                  className="w-full py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all"
+                >
                   Tantang Pasanganmu 🕯️
                 </button>
               </div>
@@ -432,6 +510,72 @@ const Extras: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Game Modal */}
+      {gameModal.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className={`relative w-full max-w-md rounded-3xl p-8 shadow-2xl overflow-hidden ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
+            {/* Visual Decor */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-violet-600/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-pink-600/10 rounded-full blur-3xl" />
+
+            <div className="relative">
+              <div className="flex justify-between items-center mb-6">
+                <span className="px-3 py-1 bg-violet-100 text-violet-600 text-xs font-bold rounded-full uppercase tracking-widest">
+                  {gameModal.title}
+                </span>
+                <button
+                  onClick={() => setGameModal(prev => ({ ...prev, isOpen: false }))}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Plus size={24} className="rotate-45 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="min-h-[160px] flex flex-col items-center justify-center text-center">
+                <div className="mb-4 text-4xl">✨</div>
+                <h3 className={`text-xl sm:text-2xl font-bold leading-relaxed mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                  "{gameModal.questions[gameModal.currentIndex]}"
+                </h3>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button
+                  onClick={nextQuestion}
+                  className="flex-1 py-4 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700 transition-all shadow-lg hover:shadow-violet-500/20 active:scale-95"
+                >
+                  Pertanyaan Selanjutnya ➔
+                </button>
+              </div>
+
+              <div className="mt-4 text-center">
+                <p className="text-xs text-gray-500">
+                  Slide {gameModal.currentIndex + 1} of {gameModal.questions.length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>
+        {`
+          @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          .animate-fade-in {
+            animation: fade-in 0.2s ease-out;
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}
+      </style>
     </div>
   );
 };

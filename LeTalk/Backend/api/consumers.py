@@ -86,6 +86,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Handle pesan biasa
         message_text = data.get("message", "")
+        # Gunakan type dari payload jika ada, default 'text'
+        sub_type = data.get("type", "text")
+
         if not message_text.strip():
             return  # Abaikan pesan kosong
 
@@ -108,6 +111,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "senderName": sender_name,
             "senderEmail": sender_email,
             "message": message_text,
+            "type": sub_type, # <--- SIMPAN TIPE PESAN
             "timestamp": datetime.utcnow().isoformat(),
             "seen": False,
             # Field AI baru (diisi nanti)
@@ -127,11 +131,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-        # --- LANGKAH 2: AI Processing (background, tidak blocking) ---
-        try:
-            await self._process_ai(message_text, sender_name, msg_data)
-        except Exception as e:
-            logger.error(f"AI processing error: {e}")
+        # --- LANGKAH 2: AI Processing (hanya untuk teks) ---
+        if sub_type == "text":
+            try:
+                await self._process_ai(message_text, sender_name, msg_data)
+            except Exception as e:
+                logger.error(f"AI processing error: {e}")
 
     # =====================================================
     # AI PROCESSING — INI BAGIAN BARU DARI LETALK
